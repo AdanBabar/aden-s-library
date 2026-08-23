@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aden's Library</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.17.1/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.17.1/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.17.1/firebase-auth-compat.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
@@ -267,6 +270,7 @@ body{
       <div class="nav-tabs">
         <button id="tab-library" class="active">Library</button>
         <button id="tab-upload">Upload</button>
+        <button id="logout-btn" style="display:none;">Log out</button>
       </div>
     </div>
   </div>
@@ -302,10 +306,11 @@ body{
   <div id="view-upload" style="display:none;">
     <div id="gate-panel" class="panel gate">
       <h2>Owner access</h2>
-      <p>This area is only for Aden. Enter the passcode to add or remove work.</p>
-      <input type="password" id="passcode-input" placeholder="Passcode">
+      <p>This area is only for Aden. Log in to add or remove work.</p>
+      <input type="text" id="login-email" placeholder="Email" style="max-width:260px;">
+      <input type="password" id="login-password" placeholder="Password">
       <div class="btn-row" style="justify-content:center;">
-        <button class="btn btn-primary" id="gate-submit">Unlock</button>
+        <button class="btn btn-primary" id="gate-submit">Log in</button>
       </div>
       <div class="status-msg err" id="gate-status" style="margin-top:10px;"></div>
     </div>
@@ -420,34 +425,40 @@ body{
     </div>
   </div>
 
-  <div class="footnote">Aden's Library — free to read for everyone. Only the owner passcode can add, edit, or remove work. Text is lightly watermarked to help protect authorship.</div>
+  <div class="footnote">Aden's Library — free to read for everyone. Only Aden's login can add, edit, or remove work. Text is lightly watermarked to help protect authorship.</div>
 </div>
 
 <script>
-/* ===================== STORAGE (works in Claude.ai + falls back outside it) ===================== */
+/* ===================== FIREBASE ===================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCkpyQaIDBLwkfTL4lr4_rzihHlnD-TdR8",
+  authDomain: "aden-s-library.firebaseapp.com",
+  projectId: "aden-s-library",
+  storageBucket: "aden-s-library.firebasestorage.app",
+  messagingSenderId: "112182251150",
+  appId: "1:112182251150:web:111767a23061c8102943df"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+/* ===================== STORAGE (Firestore = shared for everyone, everywhere) ===================== */
 const storageAPI = {
-  async get(key, shared){
-    if(window.storage){
-      try{ return await window.storage.get(key, shared); }catch(e){ return null; }
-    }
+  async get(docId){
     try{
-      const raw = localStorage.getItem((shared?'shared:':'local:') + key);
-      return raw ? { key, value: raw, shared } : null;
+      const doc = await db.collection('site').doc(docId).get();
+      return doc.exists ? doc.data() : null;
     }catch(e){ return null; }
   },
-  async set(key, value, shared){
-    if(window.storage){
-      try{ return await window.storage.set(key, value, shared); }catch(e){ return null; }
-    }
+  async set(docId, data){
     try{
-      localStorage.setItem((shared?'shared:':'local:') + key, value);
-      return { key, value, shared };
+      await db.collection('site').doc(docId).set(data);
+      return true;
     }catch(e){ return null; }
   }
 };
 
 /* ===================== STATE ===================== */
-const OWNER_PASSCODE = "aden2026";
 let isOwner = false;
 let items = [];
 let allReviews = [];
@@ -470,46 +481,43 @@ function starString(n){
 }
 
 /* ===================== THEME ===================== */
-async function initTheme(){
+function initTheme(){
   let pref = 'light';
-  try{
-    const r = await storageAPI.get('theme-pref', false);
-    if(r && r.value) pref = r.value;
-  }catch(e){}
+  try{ pref = localStorage.getItem('theme-pref') || 'light'; }catch(e){}
   applyTheme(pref);
 }
 function applyTheme(name){
   document.documentElement.setAttribute('data-theme', name);
   document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.toggle('active', b.dataset.themeBtn === name));
 }
-document.getElementById('theme-switch').addEventListener('click', async (e) => {
+document.getElementById('theme-switch').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-theme-btn]');
   if(!btn) return;
   const name = btn.dataset.themeBtn;
   applyTheme(name);
-  try{ await storageAPI.set('theme-pref', name, false); }catch(e){}
+  try{ localStorage.setItem('theme-pref', name); }catch(e){}
 });
 
 /* ===================== LOAD DATA ===================== */
 async function loadItems(){
   try{
-    const r = await storageAPI.get('library-items', true);
-    items = r && r.value ? JSON.parse(r.value) : [];
+    const r = await storageAPI.get('library-items');
+    items = r && r.json ? JSON.parse(r.json) : [];
   }catch(e){ items = []; }
   renderShelves();
 }
 async function loadAllReviews(){
   try{
-    const r = await storageAPI.get('all-reviews', true);
-    allReviews = r && r.value ? JSON.parse(r.value) : [];
+    const r = await storageAPI.get('all-reviews');
+    allReviews = r && r.json ? JSON.parse(r.json) : [];
   }catch(e){ allReviews = []; }
   renderFeed();
 }
 async function saveItems(){
-  await storageAPI.set('library-items', JSON.stringify(items), true);
+  await storageAPI.set('library-items', { json: JSON.stringify(items) });
 }
 async function saveReviews(){
-  await storageAPI.set('all-reviews', JSON.stringify(allReviews), true);
+  await storageAPI.set('all-reviews', { json: JSON.stringify(allReviews) });
 }
 
 function avgRatingFor(itemId){
@@ -793,22 +801,44 @@ tabUpload.addEventListener('click', () => {
   document.getElementById('upload-panel').style.display = isOwner ? 'block' : 'none';
 });
 
-/* ===================== OWNER GATE ===================== */
-document.getElementById('gate-submit').addEventListener('click', unlockGate);
-document.getElementById('passcode-input').addEventListener('keydown', (e) => { if(e.key === 'Enter') unlockGate(); });
-function unlockGate(){
-  const val = document.getElementById('passcode-input').value;
+/* ===================== OWNER LOGIN (real Firebase Auth) ===================== */
+document.getElementById('gate-submit').addEventListener('click', doLogin);
+document.getElementById('login-password').addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
+
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
   const statusEl = document.getElementById('gate-status');
-  if(val === OWNER_PASSCODE){
-    isOwner = true;
-    document.getElementById('gate-panel').style.display = 'none';
-    document.getElementById('upload-panel').style.display = 'block';
+  if(!email || !password){ statusEl.textContent = 'Enter your email and password.'; return; }
+  statusEl.textContent = 'Logging in…'; statusEl.classList.remove('err');
+  try{
+    await auth.signInWithEmailAndPassword(email, password);
     statusEl.textContent = '';
-    if(currentItem){ document.getElementById('delete-book').style.display = 'inline-block'; renderAfterNote(); }
-  }else{
-    statusEl.textContent = 'Incorrect passcode.';
+  }catch(e){
+    statusEl.textContent = 'Login failed — check your email and password.';
+    statusEl.classList.add('err');
   }
 }
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await auth.signOut();
+});
+
+/* Firebase remembers your login automatically between visits — this listener
+   keeps the whole page in sync whenever that login state changes. */
+auth.onAuthStateChanged((user) => {
+  isOwner = !!user;
+  document.getElementById('logout-btn').style.display = isOwner ? 'inline-block' : 'none';
+  const onUploadTab = document.getElementById('view-upload').style.display !== 'none';
+  if(onUploadTab){
+    document.getElementById('gate-panel').style.display = isOwner ? 'none' : 'block';
+    document.getElementById('upload-panel').style.display = isOwner ? 'block' : 'none';
+  }
+  if(currentItem){
+    document.getElementById('delete-book').style.display = isOwner ? 'inline-block' : 'none';
+    renderAfterNote();
+  }
+});
 
 /* ===================== UPLOAD: TYPE SWITCH ===================== */
 document.getElementById('type-select').addEventListener('click', (e) => {
