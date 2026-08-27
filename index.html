@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,19 +12,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root, html[data-theme="light"]{
-  --bg: #FFFFFF; --surface: #FAFAFA; --surface-2: #F0F0F0; --line: #DEDEDE;
-  --ink: #131313; --ink-soft: #4E4E4E; --ink-faint: #8C8C8C; --accent: #131313;
+  --bg: #FFFFFF; --surface: #FAFAF8; --surface-2: #F1F0EC; --line: #E2E0DA;
+  --ink: #15140F; --ink-soft: #55524A; --ink-faint: #8B887E; --accent: #B87F1A;
+  --reading-surface: #FBF8F2; --reading-line: #E9E4D6;
   --card-shade-1:#232323; --card-shade-2:#4B4B4B; --card-shade-3:#6E6E6E;
+  --tint-novel: rgba(21,20,15,0.035); --tint-article: rgba(184,127,26,0.06); --tint-quote: rgba(184,127,26,0.09);
 }
 html[data-theme="dark"]{
-  --bg: #101010; --surface: #191919; --surface-2: #222222; --line: #333333;
-  --ink: #F3F3F3; --ink-soft: #C4C4C4; --ink-faint: #868686; --accent: #F3F3F3;
-  --card-shade-1:#3A3A3A; --card-shade-2:#525252; --card-shade-3:#6A6A6A;
+  --bg: #0C0B0A; --surface: #17140F; --surface-2: #201C16; --line: #342C21;
+  --ink: #F4F0E6; --ink-soft: #C4BAA9; --ink-faint: #8F8574; --accent: #F2A93B;
+  --reading-surface: #1D1810; --reading-line: #3B3122;
+  --card-shade-1:#4A4238; --card-shade-2:#63584A; --card-shade-3:#7C6F5E;
+  --tint-novel: rgba(255,255,255,0.025); --tint-article: rgba(242,169,59,0.07); --tint-quote: rgba(242,169,59,0.11);
 }
 html[data-theme="sepia"]{
-  --bg: #F6EFE1; --surface: #EFE5CF; --surface-2: #E7DABB; --line: #DCCBA0;
-  --ink: #2B2313; --ink-soft: #5B4C2E; --ink-faint: #8B7A52; --accent: #2B2313;
+  --bg: #F7F0DF; --surface: #EFE5CC; --surface-2: #E6D8B4; --line: #DCCBA0;
+  --ink: #2B2313; --ink-soft: #5B4C2E; --ink-faint: #8B7A52; --accent: #96701F;
+  --reading-surface: #FBF4E0; --reading-line: #E4D6AF;
   --card-shade-1:#5B4A2E; --card-shade-2:#75613C; --card-shade-3:#8C7A50;
+  --tint-novel: rgba(43,35,19,0.04); --tint-article: rgba(150,112,31,0.08); --tint-quote: rgba(150,112,31,0.13);
 }
 
 *{box-sizing:border-box;}
@@ -36,7 +42,9 @@ body{
 }
 ::selection{ background: var(--ink); color: var(--bg); }
 
-.shell{ max-width: 980px; margin: 0 auto; padding: 0 28px 100px; }
+.shell{ max-width: 980px; margin: 0 auto; padding: 0 28px 70px; }
+
+.progress-bar{ position: fixed; top:0; left:0; height: 3px; background: var(--accent); width: 0%; z-index: 50; transition: width 0.1s linear; }
 
 .topbar{
   display:flex; align-items:center; justify-content:space-between; gap: 14px; flex-wrap: wrap;
@@ -54,27 +62,44 @@ body{
 .nav-tabs button:hover{ border-color: var(--ink); color: var(--ink); }
 .nav-tabs button.active{ background: var(--ink); border-color: var(--ink); color: var(--bg); }
 
+.theme-group{ display:flex; align-items:center; gap: 8px; }
+.theme-label{
+  font-family:'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 600; color: var(--ink-faint);
+}
 .theme-switch{ display:flex; gap: 4px; border: 1px solid var(--line); border-radius: 3px; padding: 3px; }
 .theme-switch button{
   font-family:'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
   background: transparent; border: none; color: var(--ink-faint); padding: 6px 10px; border-radius: 2px; cursor:pointer;
 }
-.theme-switch button.active{ background: var(--ink); color: var(--bg); }
+.theme-switch button.active{ background: var(--accent); color: var(--bg); font-weight: 700; }
 
-.hero{ padding: 4px 0 40px; }
+.hero{ padding: 4px 0 30px; }
 .hero-eyebrow{
   font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
-  font-weight: 600; color: var(--ink-faint); margin-bottom: 14px; display:flex; align-items:center; gap: 10px;
+  font-weight: 700; color: var(--accent); margin-bottom: 14px; display:flex; align-items:center; gap: 10px;
 }
-.hero-eyebrow::before{ content:''; width: 22px; height: 1px; background: var(--ink-faint); display:inline-block; }
+.hero-eyebrow::before{ content:''; width: 22px; height: 1px; background: var(--accent); display:inline-block; }
 .hero h1{
-  font-family:'Fraunces', serif; font-weight: 600; font-size: clamp(32px, 5vw, 48px);
-  line-height: 1.12; margin: 0 0 14px; max-width: 600px;
+  font-family:'Fraunces', serif; font-weight: 600; font-size: clamp(32px, 5vw, 50px);
+  line-height: 1.1; margin: 0 0 14px; max-width: 620px; letter-spacing: -0.01em;
 }
 .hero p{ color: var(--ink-soft); max-width: 480px; font-size: 16px; margin: 0; font-weight: 500; }
 
 /* ---------- sitewide reviews feed ---------- */
-.reviews-feed{ margin-bottom: 50px; }
+.quick-nav{
+  position: sticky; top: 0; z-index: 10; display:flex; gap: 8px; padding: 10px 0;
+  background: var(--bg); border-bottom: 1px solid var(--line); margin-bottom: 24px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+.quick-nav button{
+  font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 600; background: transparent; border: 1px solid var(--line); color: var(--ink-soft);
+  padding: 7px 14px; border-radius: 20px; cursor:pointer; transition: all 0.15s ease;
+}
+.quick-nav button:hover, .quick-nav button.active{ border-color: var(--accent); color: var(--accent); }
+
+.reviews-feed{ margin-bottom: 22px; }
 .section-heading{
   font-family:'Fraunces', serif; font-weight: 700; font-size: 22px; margin: 0 0 16px;
   display:flex; align-items:center; gap:10px;
@@ -89,30 +114,64 @@ body{
 .feed-meta{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
 .empty-feed{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
 
-/* ---------- shelves ---------- */
-.shelf-section{ margin-bottom: 46px; }
-.shelf-heading{
-  font-family:'Fraunces', serif; font-weight: 700; font-size: 21px; margin: 0 0 16px;
+/* ---------- shelves (carousels) ---------- */
+.shelf-section{
+  margin-bottom: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 22px 22px 20px; transition: background-color 0.25s ease, border-color 0.25s ease;
 }
-.shelf{ display:flex; flex-wrap:wrap; gap: 16px; }
+.shelf-heading-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+.shelf-heading{
+  font-family:'Fraunces', serif; font-weight: 700; font-size: 21px; margin: 0;
+  display:flex; align-items:center; gap: 10px;
+}
+.shelf-heading::before{ content:''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display:inline-block; }
+.shelf-arrows{ display:flex; gap: 6px; }
+.shelf-arrows button{
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg);
+  color: var(--ink-soft); cursor: pointer; font-size: 13px; display:flex; align-items:center; justify-content:center;
+  transition: all 0.15s ease;
+}
+.shelf-arrows button:hover{ border-color: var(--accent); color: var(--accent); }
+.shelf{ display:flex; gap: 16px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x proximity; padding-bottom: 6px; scrollbar-width: thin; }
+.shelf::-webkit-scrollbar{ height: 5px; }
+.shelf::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 3px; }
 .empty-shelf{ font-family:'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-faint); }
 
 .card{
-  width: 168px; background: var(--surface); border: 1px solid var(--line); border-radius: 5px;
-  cursor: pointer; overflow:hidden; text-align:left; padding: 0; transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.25s ease, border-color 0.25s ease;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  cursor: pointer; overflow:hidden; text-align:left; padding: 0; scroll-snap-align: start; flex-shrink: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.25s ease, border-color 0.25s ease;
   display:flex; flex-direction:column;
 }
-.card:hover{ transform: translateY(-4px); box-shadow: 0 8px 18px rgba(0,0,0,0.12); }
+.card:hover{ transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.18); }
 .card-top{ height: 6px; }
-.card-body{ padding: 16px 14px 14px; display:flex; flex-direction:column; gap: 8px; flex:1; }
+.card-body{ padding: 16px 15px 15px; display:flex; flex-direction:column; gap: 8px; flex:1; }
 .card-badge{
-  font-family:'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-  font-weight: 700; color: var(--ink-faint);
+  font-family:'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 700; color: var(--accent);
 }
 .card-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: 16.5px; line-height: 1.3; color: var(--ink); }
 .card-excerpt{ font-size: 12.5px; color: var(--ink-soft); font-style: italic; line-height: 1.45; font-weight: 500; }
-.card-author{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); margin-top: auto; }
+.card-author{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); margin-top: auto; letter-spacing: 0.03em; }
 .card-rating{ font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+
+/* Novels: tall book-cover card */
+.card-novel{ width: 168px; background: linear-gradient(180deg, var(--tint-novel), transparent 40%), var(--bg); }
+
+/* Articles: wide horizontal card, excerpt-forward */
+.card-article{ width: 260px; flex-direction: row; align-items: stretch; background: linear-gradient(90deg, var(--tint-article), transparent 60%), var(--bg); }
+.card-article .card-top{ width: 6px; height: auto; flex-shrink: 0; }
+.card-article .card-body{ padding: 15px 16px; }
+.card-article .card-excerpt{ font-style: normal; -webkit-line-clamp: 3; display:-webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Quotes: stylized quote card */
+.card-quote{ width: 220px; background: var(--bg); border-color: var(--line); text-align:center; }
+.card-quote .card-top{ display:none; }
+.card-quote .card-body{ align-items:center; text-align:center; padding: 22px 18px 18px; }
+.card-quote .quote-glyph{ font-family:'Fraunces', serif; font-size: 34px; color: var(--accent); line-height: 0.5; margin-bottom: 6px; }
+.card-quote .card-title{ font-family:'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 15.5px; }
+.card-quote .card-author{ margin-top: 4px; }
+.card-readtime{ font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); letter-spacing: 0.03em; }
 
 /* ---------- panels / forms ---------- */
 .panel{ background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 32px; margin-bottom: 22px; transition: background-color 0.25s ease, border-color 0.25s ease; }
@@ -186,15 +245,19 @@ body{
 .chap-nav button:hover{ color: var(--ink); }
 .chap-nav button.active{ color: var(--ink); font-weight: 700; }
 
-.watermark-wrap{ position: relative; overflow: hidden; border-radius: 4px; }
-.watermark-tile{
-  position:absolute; inset:0; pointer-events:none; opacity: 0.05; z-index: 1;
-  display:flex; flex-wrap:wrap; align-content:space-around; justify-content:space-around;
-  transform: rotate(-22deg) scale(1.3); user-select: none;
+.watermark-wrap{
+  position: relative; overflow: hidden; border-radius: 8px;
+  background: var(--reading-surface); border: 1px solid var(--reading-line);
+  padding: 36px 40px; box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
-.watermark-tile span{ font-family:'IBM Plex Mono', monospace; font-size: 13px; font-weight:700; color: var(--ink); white-space: nowrap; margin: 22px 30px; }
-.chapter-text{ position: relative; z-index: 2; font-size: 17px; line-height: 1.9; white-space: pre-wrap; max-width: 640px; color: var(--ink); font-weight: 500; }
-.chapter-text h3{ font-family:'Fraunces', serif; font-weight:700; font-size: 22px; margin-top:0; }
+.watermark-mark{
+  position:absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-18deg);
+  pointer-events:none; opacity: 0.05; z-index: 1; user-select: none; white-space: nowrap;
+  font-family:'Fraunces', serif; font-weight: 700; font-size: 64px; color: var(--ink);
+}
+.chapter-text{ position: relative; z-index: 2; font-size: 18.5px; line-height: 2; white-space: pre-wrap; max-width: 640px; color: var(--ink); font-weight: 500; letter-spacing: 0.005em; }
+.chapter-text h3{ font-family:'Fraunces', serif; font-weight:700; font-size: 23px; margin-top:0; margin-bottom: 20px; }
 
 .quote-block{ position: relative; z-index: 2; max-width: 640px; padding: 20px 0 10px; }
 .quote-mark{ font-family:'Fraunces', serif; font-size: 60px; line-height: 0.4; color: var(--ink-faint); display:block; margin-bottom: 14px; }
@@ -225,6 +288,14 @@ body{
 .review-item .r-comment{ font-size: 14.5px; color: var(--ink-soft); margin-top: 6px; font-weight:500; line-height:1.6; }
 .no-reviews{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
 
+.reply-block{ margin-top: 12px; margin-left: 18px; padding: 12px 14px; background: var(--surface-2); border-left: 2px solid var(--accent); border-radius: 3px; }
+.reply-label{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; font-weight:700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.reply-text{ font-size: 13.5px; color: var(--ink-soft); font-weight: 500; line-height: 1.6; }
+.reply-toggle{ background:none; border:none; color: var(--ink-faint); font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight:600; text-decoration: underline; cursor:pointer; margin-top: 8px; padding: 0; }
+.reply-toggle:hover{ color: var(--accent); }
+.reply-form{ margin-top: 10px; margin-left: 18px; }
+.reply-form textarea{ width:100%; min-height: 60px; font-size: 13.5px; }
+
 .inline-confirm{ display:none; align-items:center; gap: 10px; margin-top: 8px; }
 .inline-confirm.show{ display:flex; }
 
@@ -242,7 +313,9 @@ body{
   .hero p{ font-size: 15px; }
   .reader-top{ flex-direction: column; }
   .reader-title{ font-size: 25px; }
-  .card{ width: 44%; min-width: 140px; }
+  .card-novel{ width: 132px; }
+  .card-article{ width: 220px; }
+  .card-quote{ width: 190px; }
   .shelf{ gap: 12px; }
   .feed-card{ min-width: 210px; max-width: 210px; }
   .reviews-summary{ flex-wrap: wrap; }
@@ -257,15 +330,19 @@ body{
 </style>
 </head>
 <body>
+<div class="progress-bar" id="progress-bar"></div>
 
 <div class="shell">
   <div class="topbar">
     <div class="brand-mark">Aden's Library</div>
     <div class="topbar-right">
-      <div class="theme-switch" id="theme-switch">
-        <button data-theme-btn="light" class="active">Light</button>
-        <button data-theme-btn="sepia">Sepia</button>
-        <button data-theme-btn="dark">Dark</button>
+      <div class="theme-group">
+        <span class="theme-label">Theme</span>
+        <div class="theme-switch" id="theme-switch">
+          <button data-theme-btn="dark" class="active">Dark</button>
+          <button data-theme-btn="light">Light</button>
+          <button data-theme-btn="sepia">Sepia</button>
+        </div>
       </div>
       <div class="nav-tabs">
         <button id="tab-library" class="active">Library</button>
@@ -279,25 +356,41 @@ body{
   <div id="view-library">
     <div class="hero">
       <div class="hero-eyebrow">Free to read, always</div>
-      <h1>Novels, articles, and quotes — out in the open.</h1>
-      <p>Pick something off the shelf and start reading. Leave a rating if you'd like — every review here is from a real reader.</p>
+      <h1>Stories, written to be read — not skimmed.</h1>
+      <p>Every page here is built for one thing: an easy, uninterrupted read. Pick something below and settle in.</p>
     </div>
 
-    <div class="reviews-feed">
+    <div class="quick-nav" id="quick-nav">
+      <button data-jump="section-reviews">Reviews</button>
+      <button data-jump="section-novel">Novels</button>
+      <button data-jump="section-article">Articles</button>
+      <button data-jump="section-quote">Quotes</button>
+    </div>
+
+    <div class="reviews-feed" id="section-reviews">
       <div class="section-heading">What readers are saying</div>
       <div class="feed-row" id="feed-row"><div class="loading">Loading reviews…</div></div>
     </div>
 
-    <div class="shelf-section">
-      <div class="shelf-heading">Novels:</div>
+    <div class="shelf-section" id="section-novel">
+      <div class="shelf-heading-row">
+        <div class="shelf-heading">Novels:</div>
+        <div class="shelf-arrows"><button data-scroll="shelf-novel" data-dir="-1">‹</button><button data-scroll="shelf-novel" data-dir="1">›</button></div>
+      </div>
       <div class="shelf" id="shelf-novel"><div class="loading">Loading…</div></div>
     </div>
-    <div class="shelf-section">
-      <div class="shelf-heading">Articles:</div>
+    <div class="shelf-section" id="section-article">
+      <div class="shelf-heading-row">
+        <div class="shelf-heading">Articles:</div>
+        <div class="shelf-arrows"><button data-scroll="shelf-article" data-dir="-1">‹</button><button data-scroll="shelf-article" data-dir="1">›</button></div>
+      </div>
       <div class="shelf" id="shelf-article"><div class="loading">Loading…</div></div>
     </div>
-    <div class="shelf-section">
-      <div class="shelf-heading">Quotes:</div>
+    <div class="shelf-section" id="section-quote">
+      <div class="shelf-heading-row">
+        <div class="shelf-heading">Quotes:</div>
+        <div class="shelf-arrows"><button data-scroll="shelf-quote" data-dir="-1">‹</button><button data-scroll="shelf-quote" data-dir="1">›</button></div>
+      </div>
       <div class="shelf" id="shelf-quote"><div class="loading">Loading…</div></div>
     </div>
   </div>
@@ -381,7 +474,7 @@ body{
     <div class="reader-body" id="reader-body">
       <div class="chap-nav" id="chap-nav"></div>
       <div class="watermark-wrap" id="content-wrap">
-        <div class="watermark-tile" id="watermark-tile"></div>
+        <div class="watermark-mark" id="watermark-tile">Aden Babar</div>
         <div class="chapter-text" id="chapter-text"></div>
         <div class="quote-block" id="quote-block" style="display:none;"></div>
       </div>
@@ -479,11 +572,21 @@ function starString(n){
   n = Math.round(n || 0);
   return '★★★★★☆☆☆☆☆'.slice(5-n, 10-n);
 }
+function readingTimeFor(item){
+  let words = 0;
+  if(item.type === 'quote'){
+    words = (item.quoteText || '').trim().split(/\s+/).filter(Boolean).length;
+  }else{
+    words = (item.chapters || []).reduce((sum, ch) => sum + (ch.content || '').trim().split(/\s+/).filter(Boolean).length, 0);
+  }
+  const mins = Math.max(1, Math.round(words / 200));
+  return mins + ' min read';
+}
 
 /* ===================== THEME ===================== */
 function initTheme(){
-  let pref = 'light';
-  try{ pref = localStorage.getItem('theme-pref') || 'light'; }catch(e){}
+  let pref = 'dark';
+  try{ pref = localStorage.getItem('theme-pref') || 'dark'; }catch(e){}
   applyTheme(pref);
 }
 function applyTheme(name){
@@ -548,7 +651,7 @@ function renderFeed(){
   });
 }
 
-/* ===================== SHELVES ===================== */
+/* ===================== SHELVES (carousels) ===================== */
 function renderShelves(){
   renderShelf('novel');
   renderShelf('article');
@@ -565,31 +668,66 @@ function renderShelf(type){
   list.forEach((item, idx) => {
     const { avg, count } = avgRatingFor(item.id);
     const shade = CARD_SHADES[idx % CARD_SHADES.length];
-    const excerpt = type === 'quote'
-      ? '"' + (item.quoteText||'').slice(0,70) + ((item.quoteText||'').length>70?'…':'') + '"'
-      : (item.description||'').slice(0,70) + ((item.description||'').length>70?'…':'');
+    const ratingHtml = count > 0 ? '<div class="card-rating">'+starString(avg)+' ('+count+')</div>' : '';
     const card = document.createElement('button');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="card-top" style="background:var(--${shade});"></div>
-      <div class="card-body">
-        <div class="card-badge">${type}</div>
-        <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
-        ${excerpt ? '<div class="card-excerpt">'+escapeHtml(excerpt)+'</div>' : ''}
-        <div class="card-author">by ${escapeHtml(item.author || 'Aden')}</div>
-        ${count > 0 ? '<div class="card-rating">'+starString(avg)+' ('+count+')</div>' : ''}
-      </div>
-    `;
+
+    if(type === 'novel'){
+      card.className = 'card card-novel';
+      const excerpt = (item.description||'').slice(0,70) + ((item.description||'').length>70?'…':'');
+      card.innerHTML = `
+        <div class="card-top" style="background:var(--${shade});"></div>
+        <div class="card-body">
+          <div class="card-badge">Novel</div>
+          <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
+          ${excerpt ? '<div class="card-excerpt">'+escapeHtml(excerpt)+'</div>' : ''}
+          <div class="card-author">by ${escapeHtml(item.author || 'Aden')}</div>
+          <div class="card-readtime">${readingTimeFor(item)}</div>
+          ${ratingHtml}
+        </div>`;
+    }else if(type === 'article'){
+      card.className = 'card card-article';
+      const excerpt = (item.description||'').slice(0,120) + ((item.description||'').length>120?'…':'');
+      card.innerHTML = `
+        <div class="card-top" style="background:var(--${shade});"></div>
+        <div class="card-body">
+          <div class="card-badge">Article</div>
+          <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
+          ${excerpt ? '<div class="card-excerpt">'+escapeHtml(excerpt)+'</div>' : ''}
+          <div class="card-author">by ${escapeHtml(item.author || 'Aden')}</div>
+          <div class="card-readtime">${readingTimeFor(item)}</div>
+          ${ratingHtml}
+        </div>`;
+    }else{
+      card.className = 'card card-quote';
+      const snippet = (item.quoteText||'').slice(0,80) + ((item.quoteText||'').length>80?'…':'');
+      card.innerHTML = `
+        <div class="card-body">
+          <span class="quote-glyph">“</span>
+          <div class="card-badge">Quote</div>
+          <div class="card-title">${escapeHtml(snippet)}</div>
+          <div class="card-author">— ${escapeHtml(item.author || 'Aden')}</div>
+          ${ratingHtml}
+        </div>`;
+    }
     card.addEventListener('click', () => openItem(item.id));
     el.appendChild(card);
   });
 }
+
+document.querySelectorAll('.shelf-arrows button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const shelf = document.getElementById(btn.dataset.scroll);
+    const dir = parseInt(btn.dataset.dir, 10);
+    shelf.scrollBy({ left: dir * 260, behavior: 'smooth' });
+  });
+});
 
 /* ===================== READER ===================== */
 function openItem(id){
   currentItem = items.find(i => i.id === id);
   if(!currentItem) return;
   currentChapterIdx = 0;
+  window.scrollTo({ top: 0 });
 
   document.getElementById('view-library').style.display = 'none';
   document.getElementById('view-upload').style.display = 'none';
@@ -623,7 +761,7 @@ function openItem(id){
     chapterTextEl.style.display = 'block';
     quoteBlockEl.style.display = 'none';
     const chLabel = currentItem.chapters.length + ' ' + (currentItem.type === 'novel' ? 'chapter' : 'section') + (currentItem.chapters.length===1?'':'s');
-    document.getElementById('r-meta').textContent = 'by ' + (currentItem.author || 'Aden') + '  ·  ' + chLabel;
+    document.getElementById('r-meta').textContent = 'by ' + (currentItem.author || 'Aden') + '  ·  ' + chLabel + '  ·  ' + readingTimeFor(currentItem);
     renderChapterNav();
     renderChapter();
   }
@@ -655,11 +793,7 @@ function renderChapter(){
 }
 
 function renderWatermark(){
-  const tile = document.getElementById('watermark-tile');
-  const label = "Aden's Library · " + (currentItem.title || '');
-  let html = '';
-  for(let i=0;i<24;i++){ html += '<span>' + escapeHtml(label) + '</span>'; }
-  tile.innerHTML = html;
+  /* watermark text is static ("Aden Babar") — nothing to compute per item */
 }
 
 /* ---- after-note (owner-only editor, visible to all) ---- */
@@ -709,12 +843,48 @@ function renderReviews(){
     list.forEach(r => {
       const div = document.createElement('div');
       div.className = 'review-item';
+      const replyHtml = r.reply
+        ? '<div class="reply-block"><div class="reply-label">Aden replied</div><div class="reply-text">'+escapeHtml(r.reply)+'</div></div>'
+        : '';
+      const ownerControlHtml = isOwner
+        ? `<button class="reply-toggle" data-reply-for="${r.id}">${r.reply ? 'Edit reply' : 'Reply'}</button>
+           <div class="reply-form" id="reply-form-${r.id}" style="display:none;">
+             <textarea id="reply-input-${r.id}" placeholder="Write a reply — visible to everyone.">${escapeHtml(r.reply || '')}</textarea>
+             <div class="btn-row"><button class="btn btn-primary" data-save-reply="${r.id}">Save reply</button><span class="status-msg" id="reply-status-${r.id}"></span></div>
+           </div>`
+        : '';
       div.innerHTML = `
         <div class="stars">${starString(r.rating)}</div>
         <div class="r-name">${escapeHtml(r.name || 'Reader')}</div>
         ${r.comment ? '<div class="r-comment">'+escapeHtml(r.comment)+'</div>' : ''}
+        ${replyHtml}
+        ${ownerControlHtml}
       `;
       listEl.appendChild(div);
+    });
+
+    listEl.querySelectorAll('[data-reply-for]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const formEl = document.getElementById('reply-form-' + btn.dataset.replyFor);
+        formEl.style.display = formEl.style.display === 'none' ? 'block' : 'none';
+      });
+    });
+    listEl.querySelectorAll('[data-save-reply]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const revId = btn.dataset.saveReply;
+        const val = document.getElementById('reply-input-' + revId).value.trim();
+        const statusEl = document.getElementById('reply-status-' + revId);
+        statusEl.textContent = 'Saving…'; statusEl.classList.remove('err');
+        try{
+          const idx = allReviews.findIndex(x => x.id === revId);
+          if(idx > -1){ allReviews[idx].reply = val; }
+          await saveReviews();
+          renderReviews();
+          renderFeed();
+        }catch(e){
+          statusEl.textContent = 'Could not save — try again.'; statusEl.classList.add('err');
+        }
+      });
     });
   }
   pickedStars = 0;
@@ -761,6 +931,8 @@ document.getElementById('back-to-shelf').addEventListener('click', () => {
   document.getElementById('view-reader').classList.remove('active');
   document.getElementById('view-library').style.display = 'block';
   currentItem = null;
+  document.getElementById('progress-bar').style.width = '0%';
+  window.scrollTo({ top: 0 });
 });
 document.getElementById('delete-book').addEventListener('click', () => {
   document.getElementById('inline-confirm').classList.add('show');
@@ -837,6 +1009,7 @@ auth.onAuthStateChanged((user) => {
   if(currentItem){
     document.getElementById('delete-book').style.display = isOwner ? 'inline-block' : 'none';
     renderAfterNote();
+    renderReviews();
   }
 });
 
@@ -946,6 +1119,28 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
   }finally{
     btn.disabled = false;
   }
+});
+
+/* ===================== QUICK NAV ===================== */
+document.getElementById('quick-nav').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-jump]');
+  if(!btn) return;
+  const target = document.getElementById(btn.dataset.jump);
+  if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+/* ===================== READING PROGRESS BAR ===================== */
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('progress-bar');
+  const reader = document.getElementById('view-reader');
+  if(!reader.classList.contains('active')){ bar.style.width = '0%'; return; }
+  const wrap = document.getElementById('content-wrap');
+  if(!wrap) return;
+  const rect = wrap.getBoundingClientRect();
+  const total = rect.height - window.innerHeight;
+  if(total <= 0){ bar.style.width = '100%'; return; }
+  const scrolled = Math.min(Math.max(-rect.top, 0), total);
+  bar.style.width = Math.round((scrolled / total) * 100) + '%';
 });
 
 /* ===================== INIT ===================== */
