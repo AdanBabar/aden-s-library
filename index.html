@@ -238,26 +238,26 @@ body{
 .reader-desc{ color: var(--ink-soft); max-width: 580px; margin-top: 10px; font-size: 15px; font-weight: 500; }
 .reader-rating{ font-size: 13px; color: var(--accent); letter-spacing: 2px; margin-top: 8px; }
 
-.reader-body{ display:grid; grid-template-columns: 190px 1fr; gap: 34px; margin-top: 28px; }
-.reader-body.no-nav{ grid-template-columns: 1fr; }
-.chap-nav{ display:flex; flex-direction:column; gap: 2px; border-right: 1px solid var(--line); padding-right: 20px; }
-.chap-nav button{ text-align:left; background:none; border:none; color: var(--ink-soft); font-family:'IBM Plex Mono', monospace; font-weight:600; font-size: 12.5px; padding: 9px 0; cursor:pointer; }
+.reader-body{ display:flex; flex-direction:column; gap: 18px; margin-top: 28px; width: 100%; }
+.chap-nav{ display:flex; flex-direction:row; flex-wrap:wrap; gap: 4px 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+.chap-nav button{ text-align:left; background:none; border:none; color: var(--ink-soft); font-family:'IBM Plex Mono', monospace; font-weight:600; font-size: 12.5px; padding: 6px 0; cursor:pointer; }
 .chap-nav button:hover{ color: var(--ink); }
-.chap-nav button.active{ color: var(--ink); font-weight: 700; }
+.chap-nav button.active{ color: var(--accent); font-weight: 700; }
 
 .watermark-wrap{
-  position: relative; overflow: hidden; border-radius: 8px;
+  position: relative; overflow: hidden; border-radius: 8px; width: 100%;
   background: var(--reading-surface); border: 1px solid var(--reading-line);
   padding: 36px 40px; box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
   transition: background-color 0.25s ease, border-color 0.25s ease;
+  box-sizing: border-box;
 }
 .watermark-tile{
-  position:absolute; inset:0; pointer-events:none; opacity: 0.055; z-index: 1;
+  position:absolute; inset:0; pointer-events:none; opacity: 0.11; z-index: 1;
   display:flex; flex-wrap:wrap; align-content:space-around; justify-content:space-around;
   transform: rotate(-18deg) scale(1.35); user-select: none;
 }
-.watermark-tile span{ font-family:'Fraunces', serif; font-weight:700; font-size: 19px; color: var(--ink); white-space: nowrap; margin: 24px 32px; }
-.chapter-text{ position: relative; z-index: 2; font-size: 18.5px; line-height: 2; white-space: pre-wrap; max-width: 640px; color: var(--ink); font-weight: 500; letter-spacing: 0.005em; }
+.watermark-tile span{ font-family:'Fraunces', serif; font-weight:700; font-size: 18px; color: var(--ink); white-space: nowrap; margin: 22px 30px; }
+.chapter-text{ position: relative; z-index: 2; font-size: 18.5px; line-height: 2; white-space: pre-wrap; max-width: 700px; color: var(--ink); font-weight: 500; letter-spacing: 0.005em; }
 .chapter-text h3{ font-family:'Fraunces', serif; font-weight:700; font-size: 23px; margin-top:0; margin-bottom: 20px; }
 
 .quote-block{ position: relative; z-index: 2; max-width: 640px; padding: 20px 0 10px; }
@@ -301,8 +301,7 @@ body{
 .inline-confirm.show{ display:flex; }
 
 @media (max-width: 640px){
-  .reader-body{ grid-template-columns: 1fr; }
-  .chap-nav{ flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--line); padding: 0 0 12px; }
+  .chap-nav{ overflow-x:auto; flex-wrap: nowrap; }
 }
 
 @media (max-width: 600px){
@@ -783,7 +782,6 @@ function openItem(id){
   const quoteBlockEl = document.getElementById('quote-block');
 
   if(currentItem.type === 'quote'){
-    readerBody.classList.add('no-nav');
     chapNav.style.display = 'none';
     chapterTextEl.style.display = 'none';
     quoteBlockEl.style.display = 'block';
@@ -794,7 +792,6 @@ function openItem(id){
       <div class="quote-attr">— ${escapeHtml(currentItem.author || 'Aden')}</div>
     `;
   }else{
-    readerBody.classList.remove('no-nav');
     chapNav.style.display = (currentItem.chapters && currentItem.chapters.length > 1) ? 'flex' : 'none';
     chapterTextEl.style.display = 'block';
     quoteBlockEl.style.display = 'none';
@@ -833,7 +830,7 @@ function renderChapter(){
 function renderWatermark(){
   const tile = document.getElementById('watermark-tile');
   let html = '';
-  for(let i=0;i<28;i++){ html += '<span>Aden Babar</span>'; }
+  for(let i=0;i<24;i++){ html += "<span>Aden Babar - Aden's Library</span>"; }
   tile.innerHTML = html;
 }
 
