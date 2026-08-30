@@ -251,11 +251,12 @@ body{
   padding: 36px 40px; box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
-.watermark-mark{
-  position:absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-18deg);
-  pointer-events:none; opacity: 0.05; z-index: 1; user-select: none; white-space: nowrap;
-  font-family:'Fraunces', serif; font-weight: 700; font-size: 64px; color: var(--ink);
+.watermark-tile{
+  position:absolute; inset:0; pointer-events:none; opacity: 0.055; z-index: 1;
+  display:flex; flex-wrap:wrap; align-content:space-around; justify-content:space-around;
+  transform: rotate(-18deg) scale(1.35); user-select: none;
 }
+.watermark-tile span{ font-family:'Fraunces', serif; font-weight:700; font-size: 19px; color: var(--ink); white-space: nowrap; margin: 24px 32px; }
 .chapter-text{ position: relative; z-index: 2; font-size: 18.5px; line-height: 2; white-space: pre-wrap; max-width: 640px; color: var(--ink); font-weight: 500; letter-spacing: 0.005em; }
 .chapter-text h3{ font-family:'Fraunces', serif; font-weight:700; font-size: 23px; margin-top:0; margin-bottom: 20px; }
 
@@ -305,24 +306,61 @@ body{
 }
 
 @media (max-width: 600px){
-  .shell{ padding: 0 18px 80px; }
-  .topbar{ padding: 26px 0 18px; margin-bottom: 30px; }
+  .shell{ padding: 0 16px 60px; }
+  .topbar{ padding: 20px 0 16px; margin-bottom: 22px; gap: 10px; }
+  .brand-mark{ font-size: 21px; }
+  .topbar-right{ gap: 10px; width: 100%; justify-content: space-between; }
+  .theme-group{ gap: 6px; }
+  .theme-switch button{ padding: 5px 8px; font-size: 9.5px; }
+  .nav-tabs button{ padding: 8px 12px; font-size: 10.5px; }
+
+  .quick-nav{ overflow-x: auto; flex-wrap: nowrap; -ms-overflow-style: none; scrollbar-width: none; padding: 8px 0; margin-bottom: 18px; }
+  .quick-nav::-webkit-scrollbar{ display: none; }
+  .quick-nav button{ flex-shrink: 0; padding: 6px 12px; font-size: 10px; }
+
+  .hero{ padding: 0 0 22px; }
+  .hero h1{ font-size: 27px; }
+  .hero p{ font-size: 14.5px; }
+
+  .shelf-section{ padding: 16px 14px 14px; border-radius: 6px; margin-bottom: 16px; }
+  .shelf-heading{ font-size: 18px; }
+  .feed-row{ gap: 10px; }
+  .feed-card{ min-width: 200px; max-width: 200px; padding: 13px; }
+
   .panel{ padding: 20px 16px; }
   .gate{ padding: 40px 10px; }
-  .hero h1{ font-size: 28px; }
-  .hero p{ font-size: 15px; }
+  .type-select button{ padding: 9px 10px; font-size: 11px; }
+
   .reader-top{ flex-direction: column; }
-  .reader-title{ font-size: 25px; }
-  .card-novel{ width: 132px; }
-  .card-article{ width: 220px; }
-  .card-quote{ width: 190px; }
-  .shelf{ gap: 12px; }
-  .feed-card{ min-width: 210px; max-width: 210px; }
+  .reader-title{ font-size: 24px; }
+  .reader-desc{ font-size: 14px; }
+
+  .card-novel{ width: 128px; }
+  .card-article{ width: 210px; }
+  .card-quote{ width: 175px; }
+  .shelf{ gap: 10px; }
+
+  .watermark-wrap{ padding: 22px 18px; border-radius: 6px; }
+  .chapter-text{ font-size: 16.5px; line-height: 1.85; }
+  .quote-text{ font-size: 21px; }
+  .watermark-tile span{ font-size: 15px; margin: 18px 22px; }
+
   .reviews-summary{ flex-wrap: wrap; }
   .star-picker button{ font-size: 26px; padding: 4px; }
   .docx-row{ flex-direction: column; align-items: flex-start; }
   .docx-row input[type=file]{ max-width: 100%; }
   .btn{ padding: 11px 16px; }
+}
+
+@media (max-width: 380px){
+  .shell{ padding: 0 12px 50px; }
+  .card-novel{ width: 112px; }
+  .card-article{ width: 185px; }
+  .card-quote{ width: 155px; }
+  .hero h1{ font-size: 23px; }
+  .reader-title{ font-size: 21px; }
+  .chapter-text{ font-size: 15.5px; }
+  .watermark-wrap{ padding: 18px 14px; }
 }
 
 .loading{ font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); padding: 20px 0; }
@@ -356,8 +394,8 @@ body{
   <div id="view-library">
     <div class="hero">
       <div class="hero-eyebrow">Free to read, always</div>
-      <h1>Stories, written to be read — not skimmed.</h1>
-      <p>Every page here is built for one thing: an easy, uninterrupted read. Pick something below and settle in.</p>
+      <h1>Stories that pull you in.</h1>
+      <p>Handpicked novels, articles, and quotes — easy to read, hard to put down.</p>
     </div>
 
     <div class="quick-nav" id="quick-nav">
@@ -474,7 +512,7 @@ body{
     <div class="reader-body" id="reader-body">
       <div class="chap-nav" id="chap-nav"></div>
       <div class="watermark-wrap" id="content-wrap">
-        <div class="watermark-mark" id="watermark-tile">Aden Babar</div>
+        <div class="watermark-tile" id="watermark-tile"></div>
         <div class="chapter-text" id="chapter-text"></div>
         <div class="quote-block" id="quote-block" style="display:none;"></div>
       </div>
@@ -793,7 +831,10 @@ function renderChapter(){
 }
 
 function renderWatermark(){
-  /* watermark text is static ("Aden Babar") — nothing to compute per item */
+  const tile = document.getElementById('watermark-tile');
+  let html = '';
+  for(let i=0;i<28;i++){ html += '<span>Aden Babar</span>'; }
+  tile.innerHTML = html;
 }
 
 /* ---- after-note (owner-only editor, visible to all) ---- */
