@@ -125,13 +125,6 @@ body{
   display:flex; align-items:center; gap: 10px;
 }
 .shelf-heading::before{ content:''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display:inline-block; }
-.shelf-arrows{ display:flex; gap: 6px; }
-.shelf-arrows button{
-  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg);
-  color: var(--ink-soft); cursor: pointer; font-size: 13px; display:flex; align-items:center; justify-content:center;
-  transition: all 0.15s ease;
-}
-.shelf-arrows button:hover{ border-color: var(--accent); color: var(--accent); }
  
 .collection-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px; }
 .collection-tile{
@@ -143,9 +136,12 @@ body{
 .collection-title span{ display:block; font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.04em; margin-top: 4px; }
 .collection-hint{ margin-top: 14px; font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
  
-.collection-header{ margin-bottom: 26px; }
-.collection-header-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: 32px; }
-.collection-header-sub{ font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
+.collection-header{
+  margin-bottom: 26px; padding: 24px 26px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; border-left: 3px solid var(--accent);
+}
+.collection-header-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: 30px; }
+.collection-header-sub{ font-family:'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--accent); margin-top: 6px; }
  
 .announce-card{
   background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px;
@@ -157,9 +153,7 @@ body{
 .announce-card-date{ font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); margin-bottom: 6px; }
 .announce-card-excerpt{ font-size: 13.5px; color: var(--ink-soft); font-weight: 500; line-height: 1.5; }
 .no-announce{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
-.shelf{ display:flex; gap: 16px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x proximity; padding-bottom: 6px; scrollbar-width: thin; }
-.shelf::-webkit-scrollbar{ height: 5px; }
-.shelf::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 3px; }
+.shelf{ display:flex; flex-wrap: wrap; gap: 16px; }
 .empty-shelf{ font-family:'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-faint); }
  
 .card{
@@ -469,15 +463,9 @@ body{
     <button class="back-link" id="back-from-collection">← Back to home</button>
     <div class="collection-header">
       <div class="collection-header-title" id="collection-title"></div>
-      <div class="collection-header-sub">By Aden Babar</div>
+      <div class="collection-header-sub">— By Aden Babar</div>
     </div>
-    <div class="shelf-section">
-      <div class="shelf-heading-row">
-        <div class="shelf-heading" id="collection-shelf-heading"></div>
-        <div class="shelf-arrows"><button data-scroll="shelf-collection" data-dir="-1">‹</button><button data-scroll="shelf-collection" data-dir="1">›</button></div>
-      </div>
-      <div class="shelf" id="shelf-collection"><div class="loading">Loading…</div></div>
-    </div>
+    <div class="shelf" id="shelf-collection"><div class="loading">Loading…</div></div>
   </div>
  
   <!-- UPLOAD VIEW (gated) -->
@@ -557,7 +545,7 @@ body{
         <div class="reader-rating" id="r-rating"></div>
       </div>
       <div>
-        <button class="btn" id="edit-item-btn" style="display:none;">Edit</button>
+        <button class="btn btn-primary" id="edit-item-btn" style="display:none;">✎ Edit</button>
         <button class="btn btn-danger" id="delete-book" style="display:none;">Remove from shelf</button>
         <div class="inline-confirm" id="inline-confirm">
           <span class="status-msg err" style="margin:0;">Remove for good?</span>
@@ -846,8 +834,7 @@ function openCollection(type){
   document.getElementById('view-reader').classList.remove('active');
   document.getElementById('view-collection').style.display = 'block';
   const label = type.charAt(0).toUpperCase() + type.slice(1) + 's';
-  document.getElementById('collection-title').textContent = label + ' — By Aden Babar';
-  document.getElementById('collection-shelf-heading').textContent = label + ':';
+  document.getElementById('collection-title').textContent = label;
   window.scrollTo({ top: 0 });
   renderShelf(type, 'shelf-collection');
 }
@@ -859,14 +846,6 @@ document.getElementById('back-from-collection').addEventListener('click', () => 
   document.getElementById('view-collection').style.display = 'none';
   document.getElementById('view-library').style.display = 'block';
   currentCollectionType = null;
-});
- 
-document.querySelectorAll('.shelf-arrows button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const shelf = document.getElementById(btn.dataset.scroll);
-    const dir = parseInt(btn.dataset.dir, 10);
-    shelf.scrollBy({ left: dir * 260, behavior: 'smooth' });
-  });
 });
  
 /* ===================== READER ===================== */
