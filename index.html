@@ -9,8 +9,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.17.1/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.17.1/firebase-auth-compat.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+ 
 :root, html[data-theme="light"]{
   --bg: #FFFFFF; --surface: #FAFAF8; --surface-2: #F1F0EC; --line: #E2E0DA;
   --ink: #15140F; --ink-soft: #55524A; --ink-faint: #8B887E; --accent: #B87F1A;
@@ -32,7 +32,7 @@ html[data-theme="sepia"]{
   --card-shade-1:#5B4A2E; --card-shade-2:#75613C; --card-shade-3:#8C7A50;
   --tint-novel: rgba(43,35,19,0.04); --tint-article: rgba(150,112,31,0.08); --tint-quote: rgba(150,112,31,0.13);
 }
-
+ 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
@@ -41,11 +41,11 @@ body{
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 ::selection{ background: var(--ink); color: var(--bg); }
-
+ 
 .shell{ max-width: 980px; margin: 0 auto; padding: 0 28px 70px; }
-
+ 
 .progress-bar{ position: fixed; top:0; left:0; height: 3px; background: var(--accent); width: 0%; z-index: 50; transition: width 0.1s linear; }
-
+ 
 .topbar{
   display:flex; align-items:center; justify-content:space-between; gap: 14px; flex-wrap: wrap;
   padding: 36px 0 22px; border-bottom: 1px solid var(--line); margin-bottom: 40px;
@@ -61,7 +61,7 @@ body{
 }
 .nav-tabs button:hover{ border-color: var(--ink); color: var(--ink); }
 .nav-tabs button.active{ background: var(--ink); border-color: var(--ink); color: var(--bg); }
-
+ 
 .theme-group{ display:flex; align-items:center; gap: 8px; }
 .theme-label{
   font-family:'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -73,7 +73,7 @@ body{
   background: transparent; border: none; color: var(--ink-faint); padding: 6px 10px; border-radius: 2px; cursor:pointer;
 }
 .theme-switch button.active{ background: var(--accent); color: var(--bg); font-weight: 700; }
-
+ 
 .hero{ padding: 4px 0 30px; }
 .hero-eyebrow{
   font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
@@ -85,7 +85,7 @@ body{
   line-height: 1.1; margin: 0 0 14px; max-width: 620px; letter-spacing: -0.01em;
 }
 .hero p{ color: var(--ink-soft); max-width: 480px; font-size: 16px; margin: 0; font-weight: 500; }
-
+ 
 /* ---------- sitewide reviews feed ---------- */
 .quick-nav{
   position: sticky; top: 0; z-index: 10; display:flex; gap: 8px; padding: 10px 0;
@@ -98,7 +98,7 @@ body{
   padding: 7px 14px; border-radius: 20px; cursor:pointer; transition: all 0.15s ease;
 }
 .quick-nav button:hover, .quick-nav button.active{ border-color: var(--accent); color: var(--accent); }
-
+ 
 .reviews-feed{ margin-bottom: 22px; }
 .section-heading{
   font-family:'Fraunces', serif; font-weight: 700; font-size: 22px; margin: 0 0 16px;
@@ -113,7 +113,7 @@ body{
 .feed-comment{ font-size: 13.5px; color: var(--ink); margin-bottom: 10px; font-weight: 500; line-height: 1.5; }
 .feed-meta{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
 .empty-feed{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
-
+ 
 /* ---------- shelves (carousels) ---------- */
 .shelf-section{
   margin-bottom: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
@@ -132,11 +132,36 @@ body{
   transition: all 0.15s ease;
 }
 .shelf-arrows button:hover{ border-color: var(--accent); color: var(--accent); }
+ 
+.collection-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 22px; }
+.collection-tile{
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 28px 20px; text-align:left; cursor:pointer; transition: all 0.15s ease;
+}
+.collection-tile:hover{ border-color: var(--accent); transform: translateY(-3px); }
+.collection-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: 19px; color: var(--ink); }
+.collection-title span{ display:block; font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.04em; margin-top: 4px; }
+.collection-hint{ margin-top: 14px; font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+ 
+.collection-header{ margin-bottom: 26px; }
+.collection-header-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: 32px; }
+.collection-header-sub{ font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
+ 
+.announce-card{
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px;
+  margin-bottom: 12px; cursor: pointer; display:flex; gap: 14px; align-items: flex-start; transition: border-color 0.15s ease;
+}
+.announce-card:hover{ border-color: var(--accent); }
+.announce-card img{ width: 64px; height: 64px; object-fit: cover; border-radius: 5px; flex-shrink: 0; }
+.announce-card-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: 15.5px; margin-bottom: 4px; }
+.announce-card-date{ font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); margin-bottom: 6px; }
+.announce-card-excerpt{ font-size: 13.5px; color: var(--ink-soft); font-weight: 500; line-height: 1.5; }
+.no-announce{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
 .shelf{ display:flex; gap: 16px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x proximity; padding-bottom: 6px; scrollbar-width: thin; }
 .shelf::-webkit-scrollbar{ height: 5px; }
 .shelf::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 3px; }
 .empty-shelf{ font-family:'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-faint); }
-
+ 
 .card{
   background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
   cursor: pointer; overflow:hidden; text-align:left; padding: 0; scroll-snap-align: start; flex-shrink: 0;
@@ -145,6 +170,8 @@ body{
 }
 .card:hover{ transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.18); }
 .card-top{ height: 6px; }
+.card-cover{ width: 100%; height: 210px; object-fit: cover; display:block; }
+.card-article .card-cover{ width: 90px; height: auto; flex-shrink: 0; object-fit: cover; }
 .card-body{ padding: 16px 15px 15px; display:flex; flex-direction:column; gap: 8px; flex:1; }
 .card-badge{
   font-family:'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
@@ -154,30 +181,30 @@ body{
 .card-excerpt{ font-size: 12.5px; color: var(--ink-soft); font-style: italic; line-height: 1.45; font-weight: 500; }
 .card-author{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); margin-top: auto; letter-spacing: 0.03em; }
 .card-rating{ font-size: 12px; color: var(--accent); letter-spacing: 1px; }
-
+ 
 /* Novels: tall book-cover card */
 .card-novel{ width: 168px; background: linear-gradient(180deg, var(--tint-novel), transparent 40%), var(--bg); }
-
+ 
 /* Articles: wide horizontal card, excerpt-forward */
 .card-article{ width: 260px; flex-direction: row; align-items: stretch; background: linear-gradient(90deg, var(--tint-article), transparent 60%), var(--bg); }
 .card-article .card-top{ width: 6px; height: auto; flex-shrink: 0; }
 .card-article .card-body{ padding: 15px 16px; }
 .card-article .card-excerpt{ font-style: normal; -webkit-line-clamp: 3; display:-webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
-
+ 
 /* Quotes: stylized quote card */
 .card-quote{ width: 220px; background: var(--bg); border-color: var(--line); text-align:center; }
 .card-quote .card-top{ display:none; }
 .card-quote .card-body{ align-items:center; text-align:center; padding: 22px 18px 18px; }
-.card-quote .quote-glyph{ font-family:'Fraunces', serif; font-size: 34px; color: var(--accent); line-height: 0.5; margin-bottom: 6px; }
-.card-quote .card-title{ font-family:'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 15.5px; }
+.card-quote .quote-glyph{ font-family:'Cormorant Garamond', serif; font-size: 38px; color: var(--accent); line-height: 0.5; margin-bottom: 6px; }
+.card-quote .card-title{ font-family:'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 17px; }
 .card-quote .card-author{ margin-top: 4px; }
 .card-readtime{ font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); letter-spacing: 0.03em; }
-
+ 
 /* ---------- panels / forms ---------- */
 .panel{ background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 32px; margin-bottom: 22px; transition: background-color 0.25s ease, border-color 0.25s ease; }
 .panel h2{ font-family:'Fraunces', serif; font-weight: 700; font-size: 22px; margin: 0 0 6px; }
 .panel .panel-sub{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 24px; font-weight: 500; }
-
+ 
 .type-select{ display:flex; gap: 8px; margin-bottom: 26px; flex-wrap: wrap; }
 .type-select button{
   font-family:'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
@@ -185,7 +212,8 @@ body{
   padding: 10px 18px; border-radius: 3px; cursor:pointer; flex: 1 1 auto; min-width: 90px;
 }
 .type-select button.active{ background: var(--ink); border-color: var(--ink); color: var(--bg); }
-
+.type-select.locked{ opacity: 0.5; pointer-events: none; }
+ 
 .field{ margin-bottom: 20px; }
 .field label{
   display:block; font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
@@ -197,18 +225,18 @@ body{
 }
 .field input:focus, .field textarea:focus{ outline: none; border-color: var(--ink); }
 .field textarea{ min-height: 110px; line-height: 1.7; }
-
+ 
 .chapter-block{ border-left: 3px solid var(--line); padding-left: 18px; margin-bottom: 20px; }
 .chapter-block .chap-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
 .chapter-block .chap-head span{ font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; }
 .remove-chap{ background:none; border:none; color: var(--ink-faint); font-family:'IBM Plex Mono',monospace; font-size: 11px; cursor:pointer; text-decoration: underline; }
 .remove-chap:hover{ color: var(--ink); }
-
+ 
 .docx-row{ display:flex; align-items:center; gap: 10px; margin-bottom: 12px; padding: 10px 12px; background: var(--surface-2); border: 1px dashed var(--line); border-radius: 3px; flex-wrap: wrap; }
 .docx-row label{ font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); font-weight:600; letter-spacing: 0.04em; }
 .docx-row input[type=file]{ font-family:'Inter',sans-serif; font-size: 12.5px; max-width: 220px; color: var(--ink-soft); }
 .docx-status{ font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
-
+ 
 .btn-row{ display:flex; gap: 12px; align-items:center; margin-top: 10px; flex-wrap: wrap; }
 .btn{ font-family:'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; border-radius: 3px; padding: 11px 20px; cursor: pointer; border: 1px solid var(--line); background: var(--bg); color: var(--ink); transition: all 0.15s ease; }
 .btn:hover{ border-color: var(--ink); }
@@ -220,12 +248,12 @@ body{
 .btn-ghost{ border-color: transparent; text-decoration: underline; }
 .status-msg{ font-family:'IBM Plex Mono', monospace; font-size: 12px; color: #3F7D3F; margin-top: 4px; min-height: 16px; font-weight: 600; }
 .status-msg.err{ color: #C24141; }
-
+ 
 .gate{ text-align:center; padding: 60px 20px; }
 .gate h2{ font-family:'Fraunces', serif; font-weight: 700; font-size: 24px; margin-bottom: 10px; }
 .gate p{ color: var(--ink-soft); font-size: 14px; margin-bottom: 24px; font-weight: 500; }
 .gate input{ max-width: 220px; margin: 0 auto 14px; display:block; text-align:center; }
-
+ 
 /* ---------- reader ---------- */
 .reader{ display:none; }
 .reader.active{ display:block; }
@@ -237,13 +265,13 @@ body{
 .reader-meta{ font-family:'IBM Plex Mono', monospace; font-size: 12px; font-weight:600; color: var(--ink-faint); }
 .reader-desc{ color: var(--ink-soft); max-width: 580px; margin-top: 10px; font-size: 15px; font-weight: 500; }
 .reader-rating{ font-size: 13px; color: var(--accent); letter-spacing: 2px; margin-top: 8px; }
-
+ 
 .reader-body{ display:flex; flex-direction:column; gap: 18px; margin-top: 28px; width: 100%; }
 .chap-nav{ display:flex; flex-direction:row; flex-wrap:wrap; gap: 4px 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
 .chap-nav button{ text-align:left; background:none; border:none; color: var(--ink-soft); font-family:'IBM Plex Mono', monospace; font-weight:600; font-size: 12.5px; padding: 6px 0; cursor:pointer; }
 .chap-nav button:hover{ color: var(--ink); }
 .chap-nav button.active{ color: var(--accent); font-weight: 700; }
-
+ 
 .watermark-wrap{
   position: relative; overflow: hidden; border-radius: 8px; width: 100%;
   background: var(--reading-surface); border: 1px solid var(--reading-line);
@@ -259,36 +287,36 @@ body{
 .watermark-tile span{ font-family:'Fraunces', serif; font-weight:700; font-size: 18px; color: var(--ink); white-space: nowrap; margin: 22px 30px; }
 .chapter-text{ position: relative; z-index: 2; font-size: 18.5px; line-height: 2; white-space: pre-wrap; max-width: 700px; color: var(--ink); font-weight: 500; letter-spacing: 0.005em; }
 .chapter-text h3{ font-family:'Fraunces', serif; font-weight:700; font-size: 23px; margin-top:0; margin-bottom: 20px; }
-
+ 
 .quote-block{ position: relative; z-index: 2; max-width: 640px; padding: 20px 0 10px; }
-.quote-mark{ font-family:'Fraunces', serif; font-size: 60px; line-height: 0.4; color: var(--ink-faint); display:block; margin-bottom: 14px; }
-.quote-text{ font-family:'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 26px; line-height: 1.5; color: var(--ink); }
+.quote-mark{ font-family:'Cormorant Garamond', serif; font-size: 64px; line-height: 0.4; color: var(--ink-faint); display:block; margin-bottom: 14px; }
+.quote-text{ font-family:'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 30px; line-height: 1.5; color: var(--ink); }
 .quote-attr{ margin-top: 20px; font-family:'IBM Plex Mono', monospace; font-size: 13px; font-weight:600; color: var(--ink-soft); }
-
+ 
 .after-note{ margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); max-width: 640px; }
 .after-note-label{ font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight:700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
 .after-note-text{ font-size: 14.5px; color: var(--ink-soft); font-weight: 500; line-height: 1.7; white-space: pre-wrap; }
 .after-note textarea{ width:100%; min-height: 90px; margin-top: 8px; }
-
+ 
 /* ---------- reviews ---------- */
 .reviews-section{ margin-top: 50px; padding-top: 30px; border-top: 1px solid var(--line); max-width: 680px; }
 .reviews-summary{ display:flex; align-items:center; gap: 14px; margin-bottom: 22px; }
 .reviews-summary .avg{ font-family:'Fraunces', serif; font-weight: 700; font-size: 30px; }
 .reviews-summary .stars{ color: var(--accent); font-size: 16px; letter-spacing: 2px; }
 .reviews-summary .count{ font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); }
-
+ 
 .review-form{ background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 22px; margin-bottom: 26px; }
 .star-picker{ display:flex; gap: 6px; margin-bottom: 16px; }
 .star-picker button{ background:none; border:none; font-size: 22px; cursor:pointer; color: var(--line); padding:0; }
 .star-picker button.on{ color: var(--accent); }
-
+ 
 .review-item{ padding: 16px 0; border-bottom: 1px solid var(--line); }
 .review-item:last-child{ border-bottom: none; }
 .review-item .stars{ color: var(--accent); font-size: 13px; letter-spacing: 2px; margin-bottom: 6px; }
 .review-item .r-name{ font-family:'IBM Plex Mono', monospace; font-size: 11.5px; font-weight:700; color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em; }
 .review-item .r-comment{ font-size: 14.5px; color: var(--ink-soft); margin-top: 6px; font-weight:500; line-height:1.6; }
 .no-reviews{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
-
+ 
 .reply-block{ margin-top: 12px; margin-left: 18px; padding: 12px 14px; background: var(--surface-2); border-left: 2px solid var(--accent); border-radius: 3px; }
 .reply-label{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; font-weight:700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
 .reply-text{ font-size: 13.5px; color: var(--ink-soft); font-weight: 500; line-height: 1.6; }
@@ -296,14 +324,14 @@ body{
 .reply-toggle:hover{ color: var(--accent); }
 .reply-form{ margin-top: 10px; margin-left: 18px; }
 .reply-form textarea{ width:100%; min-height: 60px; font-size: 13.5px; }
-
+ 
 .inline-confirm{ display:none; align-items:center; gap: 10px; margin-top: 8px; }
 .inline-confirm.show{ display:flex; }
-
+ 
 @media (max-width: 640px){
   .chap-nav{ overflow-x:auto; flex-wrap: nowrap; }
 }
-
+ 
 @media (max-width: 600px){
   .shell{ padding: 0 16px 60px; }
   .topbar{ padding: 20px 0 16px; margin-bottom: 22px; gap: 10px; }
@@ -312,45 +340,48 @@ body{
   .theme-group{ gap: 6px; }
   .theme-switch button{ padding: 5px 8px; font-size: 9.5px; }
   .nav-tabs button{ padding: 8px 12px; font-size: 10.5px; }
-
+  .collection-grid{ grid-template-columns: 1fr; }
+  .collection-header-title{ font-size: 26px; }
+  .announce-card img{ width: 52px; height: 52px; }
+ 
   .quick-nav{ overflow-x: auto; flex-wrap: nowrap; -ms-overflow-style: none; scrollbar-width: none; padding: 8px 0; margin-bottom: 18px; }
   .quick-nav::-webkit-scrollbar{ display: none; }
   .quick-nav button{ flex-shrink: 0; padding: 6px 12px; font-size: 10px; }
-
+ 
   .hero{ padding: 0 0 22px; }
   .hero h1{ font-size: 27px; }
   .hero p{ font-size: 14.5px; }
-
+ 
   .shelf-section{ padding: 16px 14px 14px; border-radius: 6px; margin-bottom: 16px; }
   .shelf-heading{ font-size: 18px; }
   .feed-row{ gap: 10px; }
   .feed-card{ min-width: 200px; max-width: 200px; padding: 13px; }
-
+ 
   .panel{ padding: 20px 16px; }
   .gate{ padding: 40px 10px; }
   .type-select button{ padding: 9px 10px; font-size: 11px; }
-
+ 
   .reader-top{ flex-direction: column; }
   .reader-title{ font-size: 24px; }
   .reader-desc{ font-size: 14px; }
-
+ 
   .card-novel{ width: 128px; }
   .card-article{ width: 210px; }
   .card-quote{ width: 175px; }
   .shelf{ gap: 10px; }
-
+ 
   .watermark-wrap{ padding: 22px 18px; border-radius: 6px; }
   .chapter-text{ font-size: 16.5px; line-height: 1.85; }
   .quote-text{ font-size: 21px; }
   .watermark-tile span{ font-size: 15px; margin: 18px 22px; }
-
+ 
   .reviews-summary{ flex-wrap: wrap; }
   .star-picker button{ font-size: 26px; padding: 4px; }
   .docx-row{ flex-direction: column; align-items: flex-start; }
   .docx-row input[type=file]{ max-width: 100%; }
   .btn{ padding: 11px 16px; }
 }
-
+ 
 @media (max-width: 380px){
   .shell{ padding: 0 12px 50px; }
   .card-novel{ width: 112px; }
@@ -361,14 +392,14 @@ body{
   .chapter-text{ font-size: 15.5px; }
   .watermark-wrap{ padding: 18px 14px; }
 }
-
+ 
 .loading{ font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); padding: 20px 0; }
 .footnote{ margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); letter-spacing: 0.02em; font-weight:500; }
 </style>
 </head>
 <body>
 <div class="progress-bar" id="progress-bar"></div>
-
+ 
 <div class="shell">
   <div class="topbar">
     <div class="brand-mark">Aden's Library</div>
@@ -388,7 +419,7 @@ body{
       </div>
     </div>
   </div>
-
+ 
   <!-- LIBRARY VIEW -->
   <div id="view-library">
     <div class="hero">
@@ -396,42 +427,59 @@ body{
       <h1>Stories that pull you in.</h1>
       <p>Handpicked novels, articles, and quotes — easy to read, hard to put down.</p>
     </div>
-
+ 
     <div class="quick-nav" id="quick-nav">
+      <button data-jump="section-announcements">Announcements</button>
       <button data-jump="section-reviews">Reviews</button>
-      <button data-jump="section-novel">Novels</button>
-      <button data-jump="section-article">Articles</button>
-      <button data-jump="section-quote">Quotes</button>
+      <button data-collection="novel">Novels</button>
+      <button data-collection="article">Articles</button>
+      <button data-collection="quote">Quotes</button>
     </div>
-
+ 
+    <div class="shelf-section" id="section-announcements">
+      <div class="shelf-heading-row">
+        <div class="shelf-heading">Announcements:</div>
+      </div>
+      <div id="announcements-feed"><div class="loading">Loading…</div></div>
+    </div>
+ 
     <div class="reviews-feed" id="section-reviews">
       <div class="section-heading">What readers are saying</div>
       <div class="feed-row" id="feed-row"><div class="loading">Loading reviews…</div></div>
     </div>
-
-    <div class="shelf-section" id="section-novel">
-      <div class="shelf-heading-row">
-        <div class="shelf-heading">Novels:</div>
-        <div class="shelf-arrows"><button data-scroll="shelf-novel" data-dir="-1">‹</button><button data-scroll="shelf-novel" data-dir="1">›</button></div>
-      </div>
-      <div class="shelf" id="shelf-novel"><div class="loading">Loading…</div></div>
-    </div>
-    <div class="shelf-section" id="section-article">
-      <div class="shelf-heading-row">
-        <div class="shelf-heading">Articles:</div>
-        <div class="shelf-arrows"><button data-scroll="shelf-article" data-dir="-1">‹</button><button data-scroll="shelf-article" data-dir="1">›</button></div>
-      </div>
-      <div class="shelf" id="shelf-article"><div class="loading">Loading…</div></div>
-    </div>
-    <div class="shelf-section" id="section-quote">
-      <div class="shelf-heading-row">
-        <div class="shelf-heading">Quotes:</div>
-        <div class="shelf-arrows"><button data-scroll="shelf-quote" data-dir="-1">‹</button><button data-scroll="shelf-quote" data-dir="1">›</button></div>
-      </div>
-      <div class="shelf" id="shelf-quote"><div class="loading">Loading…</div></div>
+ 
+    <div class="collection-grid">
+      <button class="collection-tile" data-collection="novel">
+        <div class="collection-title">Novels <span>— By Aden Babar</span></div>
+        <div class="collection-hint">Click to read →</div>
+      </button>
+      <button class="collection-tile" data-collection="article">
+        <div class="collection-title">Articles <span>— By Aden Babar</span></div>
+        <div class="collection-hint">Click to read →</div>
+      </button>
+      <button class="collection-tile" data-collection="quote">
+        <div class="collection-title">Quotes <span>— By Aden Babar</span></div>
+        <div class="collection-hint">Click to read →</div>
+      </button>
     </div>
   </div>
-
+ 
+  <!-- COLLECTION VIEW (Novels / Articles / Quotes landing page) -->
+  <div id="view-collection" style="display:none;">
+    <button class="back-link" id="back-from-collection">← Back to home</button>
+    <div class="collection-header">
+      <div class="collection-header-title" id="collection-title"></div>
+      <div class="collection-header-sub">By Aden Babar</div>
+    </div>
+    <div class="shelf-section">
+      <div class="shelf-heading-row">
+        <div class="shelf-heading" id="collection-shelf-heading"></div>
+        <div class="shelf-arrows"><button data-scroll="shelf-collection" data-dir="-1">‹</button><button data-scroll="shelf-collection" data-dir="1">›</button></div>
+      </div>
+      <div class="shelf" id="shelf-collection"><div class="loading">Loading…</div></div>
+    </div>
+  </div>
+ 
   <!-- UPLOAD VIEW (gated) -->
   <div id="view-upload" style="display:none;">
     <div id="gate-panel" class="panel gate">
@@ -444,22 +492,24 @@ body{
       </div>
       <div class="status-msg err" id="gate-status" style="margin-top:10px;"></div>
     </div>
-
+ 
     <div id="upload-panel" class="panel" style="display:none;">
-      <h2>Add to the shelf</h2>
-      <div class="panel-sub">Choose a type, then fill it in. Upload a .docx to fill a section automatically.</div>
-
+      <h2 id="upload-heading">Add to the shelf</h2>
+      <div class="panel-sub" id="upload-subheading">Choose a type, then fill it in. Upload a .docx to fill a section automatically.</div>
+      <div class="status-msg" id="editing-banner" style="display:none; margin-bottom:16px;">Editing an existing item — type is locked while editing. <button class="reply-toggle" id="cancel-edit-btn" type="button">Cancel edit</button></div>
+ 
       <div class="type-select" id="type-select">
         <button data-type="novel" class="active">Novel</button>
         <button data-type="article">Article</button>
         <button data-type="quote">Quote</button>
+        <button data-type="announcement">Announcement</button>
       </div>
-
+ 
       <div class="field">
         <label id="title-label">Title</label>
         <input type="text" id="f-title" placeholder="The Long Way Home">
       </div>
-      <div class="field">
+      <div class="field" id="author-field">
         <label id="author-label">Author</label>
         <input type="text" id="f-author" placeholder="Your name or pen name" value="Aden">
       </div>
@@ -467,29 +517,37 @@ body{
         <label id="desc-label">Description</label>
         <textarea id="f-desc" placeholder="A short blurb readers will see before they open it." style="min-height:70px;"></textarea>
       </div>
-
+ 
+      <div class="field" id="image-field">
+        <label id="image-label">Cover image (optional)</label>
+        <input type="file" id="f-image-file" accept="image/*">
+        <div class="docx-status" id="image-status" style="margin-top:6px;"></div>
+        <img id="image-preview" style="display:none; max-width:120px; border-radius:5px; margin-top:8px;">
+      </div>
+ 
       <div id="chapters-wrap">
         <div id="chapters-holder"></div>
         <div class="btn-row"><button class="btn" id="add-chapter">+ Add section</button></div>
       </div>
-
+ 
       <div id="quote-wrap" style="display:none;">
         <div class="field">
           <label>Quote text</label>
           <textarea id="f-quote-text" placeholder="Type or paste the quote here." style="min-height:100px;"></textarea>
         </div>
       </div>
-
+ 
       <div class="btn-row" style="margin-top:26px;">
         <button class="btn btn-primary" id="publish-btn">Publish to shelf</button>
         <span class="status-msg" id="publish-status"></span>
       </div>
     </div>
   </div>
-
+ 
   <!-- READER VIEW -->
   <div id="view-reader" class="reader">
     <button class="back-link" id="back-to-shelf">← Back to shelf</button>
+    <img id="r-cover" style="display:none; max-width:160px; border-radius:6px; margin-bottom:16px;">
     <div class="reader-top">
       <div>
         <div class="reader-badge" id="r-badge"></div>
@@ -499,6 +557,7 @@ body{
         <div class="reader-rating" id="r-rating"></div>
       </div>
       <div>
+        <button class="btn" id="edit-item-btn" style="display:none;">Edit</button>
         <button class="btn btn-danger" id="delete-book" style="display:none;">Remove from shelf</button>
         <div class="inline-confirm" id="inline-confirm">
           <span class="status-msg err" style="margin:0;">Remove for good?</span>
@@ -507,7 +566,7 @@ body{
         </div>
       </div>
     </div>
-
+ 
     <div class="reader-body" id="reader-body">
       <div class="chap-nav" id="chap-nav"></div>
       <div class="watermark-wrap" id="content-wrap">
@@ -516,7 +575,7 @@ body{
         <div class="quote-block" id="quote-block" style="display:none;"></div>
       </div>
     </div>
-
+ 
     <div class="after-note" id="after-note-section">
       <div class="after-note-label">A note from Aden</div>
       <div class="after-note-text" id="after-note-display"></div>
@@ -525,7 +584,7 @@ body{
         <div class="btn-row"><button class="btn btn-primary" id="save-note-btn">Save note</button><span class="status-msg" id="note-status"></span></div>
       </div>
     </div>
-
+ 
     <div class="reviews-section">
       <div class="reviews-summary">
         <div class="avg" id="rev-avg">–</div>
@@ -534,7 +593,7 @@ body{
           <div class="count" id="rev-count"></div>
         </div>
       </div>
-
+ 
       <div class="review-form">
         <div class="field" style="margin-bottom:12px;">
           <label>Your name</label>
@@ -550,14 +609,14 @@ body{
         </div>
         <div class="btn-row"><button class="btn btn-primary" id="submit-review">Post review</button><span class="status-msg" id="review-status"></span></div>
       </div>
-
+ 
       <div id="review-list"></div>
     </div>
   </div>
-
+ 
   <div class="footnote">Aden's Library — free to read for everyone. Only Aden's login can add, edit, or remove work. Text is lightly watermarked to help protect authorship.</div>
 </div>
-
+ 
 <script>
 /* ===================== FIREBASE ===================== */
 const firebaseConfig = {
@@ -571,7 +630,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
-
+ 
 /* ===================== STORAGE (Firestore = shared for everyone, everywhere) ===================== */
 const storageAPI = {
   async get(docId){
@@ -587,7 +646,7 @@ const storageAPI = {
     }catch(e){ return null; }
   }
 };
-
+ 
 /* ===================== STATE ===================== */
 let isOwner = false;
 let items = [];
@@ -596,10 +655,11 @@ let currentItem = null;
 let currentChapterIdx = 0;
 let chapterCounter = 0;
 let uploadType = 'novel';
+let editingId = null;
 let pickedStars = 0;
-
+ 
 const CARD_SHADES = ['card-shade-1','card-shade-2','card-shade-3'];
-
+ 
 function escapeHtml(str){
   const div = document.createElement('div');
   div.textContent = str || '';
@@ -619,7 +679,7 @@ function readingTimeFor(item){
   const mins = Math.max(1, Math.round(words / 200));
   return mins + ' min read';
 }
-
+ 
 /* ===================== THEME ===================== */
 function initTheme(){
   let pref = 'dark';
@@ -637,7 +697,7 @@ document.getElementById('theme-switch').addEventListener('click', (e) => {
   applyTheme(name);
   try{ localStorage.setItem('theme-pref', name); }catch(e){}
 });
-
+ 
 /* ===================== LOAD DATA ===================== */
 async function loadItems(){
   try{
@@ -659,14 +719,14 @@ async function saveItems(){
 async function saveReviews(){
   await storageAPI.set('all-reviews', { json: JSON.stringify(allReviews) });
 }
-
+ 
 function avgRatingFor(itemId){
   const list = allReviews.filter(r => r.itemId === itemId);
   if(list.length === 0) return { avg: 0, count: 0 };
   const avg = list.reduce((s,r) => s + r.rating, 0) / list.length;
   return { avg, count: list.length };
 }
-
+ 
 /* ===================== SITEWIDE REVIEWS FEED ===================== */
 function renderFeed(){
   const row = document.getElementById('feed-row');
@@ -687,15 +747,16 @@ function renderFeed(){
     row.appendChild(card);
   });
 }
-
+ 
 /* ===================== SHELVES (carousels) ===================== */
+let currentCollectionType = null;
+ 
 function renderShelves(){
-  renderShelf('novel');
-  renderShelf('article');
-  renderShelf('quote');
+  if(currentCollectionType){ renderShelf(currentCollectionType, 'shelf-collection'); }
+  renderAnnouncements();
 }
-function renderShelf(type){
-  const el = document.getElementById('shelf-' + type);
+function renderShelf(type, containerId){
+  const el = document.getElementById(containerId);
   const list = items.filter(i => i.type === type);
   if(list.length === 0){
     el.innerHTML = '<div class="empty-shelf">Nothing here yet.</div>';
@@ -706,13 +767,14 @@ function renderShelf(type){
     const { avg, count } = avgRatingFor(item.id);
     const shade = CARD_SHADES[idx % CARD_SHADES.length];
     const ratingHtml = count > 0 ? '<div class="card-rating">'+starString(avg)+' ('+count+')</div>' : '';
+    const coverHtml = item.coverImageUrl ? '<img src="'+item.coverImageUrl+'" alt="" class="card-cover">' : '';
     const card = document.createElement('button');
-
+ 
     if(type === 'novel'){
       card.className = 'card card-novel';
       const excerpt = (item.description||'').slice(0,70) + ((item.description||'').length>70?'…':'');
       card.innerHTML = `
-        <div class="card-top" style="background:var(--${shade});"></div>
+        ${coverHtml || '<div class="card-top" style="background:var(--'+shade+');"></div>'}
         <div class="card-body">
           <div class="card-badge">Novel</div>
           <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
@@ -725,7 +787,7 @@ function renderShelf(type){
       card.className = 'card card-article';
       const excerpt = (item.description||'').slice(0,120) + ((item.description||'').length>120?'…':'');
       card.innerHTML = `
-        <div class="card-top" style="background:var(--${shade});"></div>
+        ${coverHtml || '<div class="card-top" style="background:var(--'+shade+');"></div>'}
         <div class="card-body">
           <div class="card-badge">Article</div>
           <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
@@ -750,7 +812,55 @@ function renderShelf(type){
     el.appendChild(card);
   });
 }
-
+ 
+function renderAnnouncements(){
+  const el = document.getElementById('announcements-feed');
+  if(!el) return;
+  const list = items.filter(i => i.type === 'announcement').sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  if(list.length === 0){
+    el.innerHTML = '<div class="no-announce">Nothing posted yet.</div>';
+    return;
+  }
+  el.innerHTML = '';
+  list.forEach(item => {
+    const excerpt = (item.description||'').slice(0,140) + ((item.description||'').length>140?'…':'');
+    const dateStr = new Date(item.createdAt).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+    const card = document.createElement('div');
+    card.className = 'announce-card';
+    card.innerHTML = `
+      ${item.imageUrl ? '<img src="'+item.imageUrl+'" alt="">' : ''}
+      <div>
+        <div class="announce-card-title">${escapeHtml(item.title || 'Untitled')}</div>
+        <div class="announce-card-date">${dateStr}</div>
+        <div class="announce-card-excerpt">${escapeHtml(excerpt)}</div>
+      </div>`;
+    card.addEventListener('click', () => openItem(item.id));
+    el.appendChild(card);
+  });
+}
+ 
+function openCollection(type){
+  currentCollectionType = type;
+  document.getElementById('view-library').style.display = 'none';
+  document.getElementById('view-upload').style.display = 'none';
+  document.getElementById('view-reader').classList.remove('active');
+  document.getElementById('view-collection').style.display = 'block';
+  const label = type.charAt(0).toUpperCase() + type.slice(1) + 's';
+  document.getElementById('collection-title').textContent = label + ' — By Aden Babar';
+  document.getElementById('collection-shelf-heading').textContent = label + ':';
+  window.scrollTo({ top: 0 });
+  renderShelf(type, 'shelf-collection');
+}
+ 
+document.querySelectorAll('[data-collection]').forEach(el => {
+  el.addEventListener('click', () => openCollection(el.dataset.collection));
+});
+document.getElementById('back-from-collection').addEventListener('click', () => {
+  document.getElementById('view-collection').style.display = 'none';
+  document.getElementById('view-library').style.display = 'block';
+  currentCollectionType = null;
+});
+ 
 document.querySelectorAll('.shelf-arrows button').forEach(btn => {
   btn.addEventListener('click', () => {
     const shelf = document.getElementById(btn.dataset.scroll);
@@ -758,30 +868,48 @@ document.querySelectorAll('.shelf-arrows button').forEach(btn => {
     shelf.scrollBy({ left: dir * 260, behavior: 'smooth' });
   });
 });
-
+ 
 /* ===================== READER ===================== */
 function openItem(id){
   currentItem = items.find(i => i.id === id);
   if(!currentItem) return;
   currentChapterIdx = 0;
   window.scrollTo({ top: 0 });
-
+ 
   document.getElementById('view-library').style.display = 'none';
   document.getElementById('view-upload').style.display = 'none';
+  document.getElementById('view-collection').style.display = 'none';
   document.getElementById('view-reader').classList.add('active');
   document.getElementById('inline-confirm').classList.remove('show');
-
+ 
   document.getElementById('r-badge').textContent = currentItem.type;
   document.getElementById('r-title').textContent = currentItem.title || 'Untitled';
-  document.getElementById('r-desc').textContent = currentItem.description || '';
+  document.getElementById('r-desc').textContent = currentItem.type === 'announcement' ? '' : (currentItem.description || '');
   document.getElementById('delete-book').style.display = isOwner ? 'inline-block' : 'none';
-
+  document.getElementById('edit-item-btn').style.display = isOwner ? 'inline-block' : 'none';
+ 
+  const coverEl = document.getElementById('r-cover');
+  const coverUrl = currentItem.coverImageUrl || currentItem.imageUrl;
+  if(coverUrl){ coverEl.src = coverUrl; coverEl.style.display = 'block'; }
+  else{ coverEl.style.display = 'none'; }
+ 
   const readerBody = document.getElementById('reader-body');
   const chapNav = document.getElementById('chap-nav');
   const chapterTextEl = document.getElementById('chapter-text');
   const quoteBlockEl = document.getElementById('quote-block');
-
-  if(currentItem.type === 'quote'){
+  const reviewsSection = document.querySelector('.reviews-section');
+  const afterNoteSection = document.getElementById('after-note-section');
+ 
+  if(currentItem.type === 'announcement'){
+    chapNav.style.display = 'none';
+    quoteBlockEl.style.display = 'none';
+    chapterTextEl.style.display = 'block';
+    chapterTextEl.innerHTML = '<h3>' + escapeHtml(currentItem.title || '') + '</h3>' + escapeHtml(currentItem.description || '');
+    document.getElementById('r-meta').textContent = new Date(currentItem.createdAt).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+    if(reviewsSection) reviewsSection.style.display = 'none';
+    afterNoteSection.style.display = 'none';
+  }else if(currentItem.type === 'quote'){
+    if(reviewsSection) reviewsSection.style.display = 'block';
     chapNav.style.display = 'none';
     chapterTextEl.style.display = 'none';
     quoteBlockEl.style.display = 'block';
@@ -792,6 +920,7 @@ function openItem(id){
       <div class="quote-attr">— ${escapeHtml(currentItem.author || 'Aden')}</div>
     `;
   }else{
+    if(reviewsSection) reviewsSection.style.display = 'block';
     chapNav.style.display = (currentItem.chapters && currentItem.chapters.length > 1) ? 'flex' : 'none';
     chapterTextEl.style.display = 'block';
     quoteBlockEl.style.display = 'none';
@@ -800,15 +929,18 @@ function openItem(id){
     renderChapterNav();
     renderChapter();
   }
-
+ 
   renderWatermark();
-  renderAfterNote();
-  renderReviews();
-
+  if(currentItem.type !== 'announcement'){
+    afterNoteSection.style.display = 'block';
+    renderAfterNote();
+    renderReviews();
+  }
+ 
   const { avg, count } = avgRatingFor(currentItem.id);
-  document.getElementById('r-rating').textContent = count > 0 ? (starString(avg) + '  ' + avg.toFixed(1) + ' (' + count + ')') : '';
+  document.getElementById('r-rating').textContent = (currentItem.type !== 'announcement' && count > 0) ? (starString(avg) + '  ' + avg.toFixed(1) + ' (' + count + ')') : '';
 }
-
+ 
 function renderChapterNav(){
   const nav = document.getElementById('chap-nav');
   nav.innerHTML = '';
@@ -826,14 +958,14 @@ function renderChapter(){
   const label = currentItem.type==='novel' ? 'Chapter ' : 'Section ';
   el.innerHTML = '<h3>' + escapeHtml(ch.title || (label + (currentChapterIdx+1))) + '</h3>' + escapeHtml(ch.content);
 }
-
+ 
 function renderWatermark(){
   const tile = document.getElementById('watermark-tile');
   let html = '';
   for(let i=0;i<24;i++){ html += "<span>Aden Babar - Aden's Library</span>"; }
   tile.innerHTML = html;
 }
-
+ 
 /* ---- after-note (owner-only editor, visible to all) ---- */
 function renderAfterNote(){
   const display = document.getElementById('after-note-display');
@@ -864,7 +996,7 @@ document.getElementById('save-note-btn').addEventListener('click', async () => {
     statusEl.textContent = 'Could not save — try again.'; statusEl.classList.add('err');
   }
 });
-
+ 
 /* ---- reviews for current item ---- */
 function renderReviews(){
   const list = allReviews.filter(r => r.itemId === currentItem.id).sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
@@ -872,7 +1004,7 @@ function renderReviews(){
   document.getElementById('rev-avg').textContent = count ? avg.toFixed(1) : '–';
   document.getElementById('rev-stars').textContent = count ? starString(avg) : '☆☆☆☆☆';
   document.getElementById('rev-count').textContent = count ? (count + (count===1?' review':' reviews')) : 'No reviews yet';
-
+ 
   const listEl = document.getElementById('review-list');
   if(list.length === 0){
     listEl.innerHTML = '<div class="no-reviews">Be the first to review this.</div>';
@@ -900,7 +1032,7 @@ function renderReviews(){
       `;
       listEl.appendChild(div);
     });
-
+ 
     listEl.querySelectorAll('[data-reply-for]').forEach(btn => {
       btn.addEventListener('click', () => {
         const formEl = document.getElementById('reply-form-' + btn.dataset.replyFor);
@@ -931,14 +1063,14 @@ function renderReviews(){
   document.getElementById('rev-comment').value = '';
   document.getElementById('review-status').textContent = '';
 }
-
+ 
 document.getElementById('star-picker').addEventListener('click', (e) => {
   const btn = e.target.closest('button');
   if(!btn) return;
   pickedStars = parseInt(btn.dataset.star, 10);
   document.querySelectorAll('#star-picker button').forEach(b => b.classList.toggle('on', parseInt(b.dataset.star,10) <= pickedStars));
 });
-
+ 
 document.getElementById('submit-review').addEventListener('click', async () => {
   const statusEl = document.getElementById('review-status');
   const name = document.getElementById('rev-name').value.trim() || 'Reader';
@@ -963,7 +1095,7 @@ document.getElementById('submit-review').addEventListener('click', async () => {
     statusEl.textContent = 'Could not post — try again.'; statusEl.classList.add('err');
   }
 });
-
+ 
 /* ---- back / delete (inline confirm, no native dialogs) ---- */
 document.getElementById('back-to-shelf').addEventListener('click', () => {
   document.getElementById('view-reader').classList.remove('active');
@@ -992,29 +1124,31 @@ document.getElementById('confirm-delete').addEventListener('click', async () => 
     statusRow.querySelector('span').textContent = 'Could not remove — try again.';
   }
 });
-
+ 
 /* ===================== TABS ===================== */
 const tabLibrary = document.getElementById('tab-library');
 const tabUpload = document.getElementById('tab-upload');
 tabLibrary.addEventListener('click', () => {
   document.getElementById('view-reader').classList.remove('active');
   document.getElementById('view-upload').style.display = 'none';
+  document.getElementById('view-collection').style.display = 'none';
   document.getElementById('view-library').style.display = 'block';
   tabLibrary.classList.add('active'); tabUpload.classList.remove('active');
 });
 tabUpload.addEventListener('click', () => {
   document.getElementById('view-reader').classList.remove('active');
   document.getElementById('view-library').style.display = 'none';
+  document.getElementById('view-collection').style.display = 'none';
   document.getElementById('view-upload').style.display = 'block';
   tabUpload.classList.add('active'); tabLibrary.classList.remove('active');
   document.getElementById('gate-panel').style.display = isOwner ? 'none' : 'block';
   document.getElementById('upload-panel').style.display = isOwner ? 'block' : 'none';
 });
-
+ 
 /* ===================== OWNER LOGIN (real Firebase Auth) ===================== */
 document.getElementById('gate-submit').addEventListener('click', doLogin);
 document.getElementById('login-password').addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
-
+ 
 async function doLogin(){
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
@@ -1029,11 +1163,11 @@ async function doLogin(){
     statusEl.classList.add('err');
   }
 }
-
+ 
 document.getElementById('logout-btn').addEventListener('click', async () => {
   await auth.signOut();
 });
-
+ 
 /* Firebase remembers your login automatically between visits — this listener
    keeps the whole page in sync whenever that login state changes. */
 auth.onAuthStateChanged((user) => {
@@ -1050,23 +1184,28 @@ auth.onAuthStateChanged((user) => {
     renderReviews();
   }
 });
-
+ 
 /* ===================== UPLOAD: TYPE SWITCH ===================== */
 document.getElementById('type-select').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-type]');
   if(!btn) return;
+  if(document.getElementById('type-select').classList.contains('locked')) return;
   uploadType = btn.dataset.type;
   document.querySelectorAll('#type-select button').forEach(b => b.classList.toggle('active', b === btn));
   const isQuote = uploadType === 'quote';
-  document.getElementById('chapters-wrap').style.display = isQuote ? 'none' : 'block';
+  const isAnnouncement = uploadType === 'announcement';
+  document.getElementById('chapters-wrap').style.display = (isQuote || isAnnouncement) ? 'none' : 'block';
   document.getElementById('quote-wrap').style.display = isQuote ? 'block' : 'none';
+  document.getElementById('author-field').style.display = isAnnouncement ? 'none' : 'block';
+  document.getElementById('image-field').style.display = isQuote ? 'none' : 'block';
+  document.getElementById('image-label').textContent = isAnnouncement ? 'Image (optional)' : 'Cover image (optional)';
   document.getElementById('title-label').textContent = isQuote ? 'Title (optional)' : 'Title';
-  document.getElementById('desc-label').textContent = isQuote ? 'Context (optional)' : 'Description';
+  document.getElementById('desc-label').textContent = isQuote ? 'Context (optional)' : (isAnnouncement ? 'Message' : 'Description');
   document.getElementById('f-title').placeholder = isQuote ? 'Leave blank to use the quote itself' : 'The Long Way Home';
 });
-
+ 
 /* ===================== CHAPTER / SECTION BUILDER ===================== */
-function addChapterBlock(){
+function addChapterBlock(prefillTitle, prefillContent){
   chapterCounter++;
   const id = 'chap-' + chapterCounter;
   const block = document.createElement('div');
@@ -1075,13 +1214,13 @@ function addChapterBlock(){
   const label = uploadType === 'novel' ? 'Chapter' : 'Section';
   block.innerHTML = `
     <div class="chap-head"><span>${label}</span><button type="button" class="remove-chap">remove</button></div>
-    <div class="field" style="margin-bottom:10px;"><input type="text" class="chap-title-input" placeholder="${label} title (optional)"></div>
+    <div class="field" style="margin-bottom:10px;"><input type="text" class="chap-title-input" placeholder="${label} title (optional)" value="${escapeHtml(prefillTitle || '')}"></div>
     <div class="docx-row">
       <label>Upload .docx →</label>
       <input type="file" class="chap-docx-input" accept=".docx">
       <span class="docx-status"></span>
     </div>
-    <div class="field"><textarea class="chap-content-input" placeholder="Paste text here, or upload a .docx above to fill this in."></textarea></div>
+    <div class="field"><textarea class="chap-content-input" placeholder="Paste text here, or upload a .docx above to fill this in.">${escapeHtml(prefillContent || '')}</textarea></div>
   `;
   block.querySelector('.remove-chap').addEventListener('click', () => block.remove());
   block.querySelector('.chap-docx-input').addEventListener('change', (e) => handleDocxUpload(e, block));
@@ -1106,7 +1245,124 @@ async function handleDocxUpload(e, block){
 }
 document.getElementById('add-chapter').addEventListener('click', addChapterBlock);
 addChapterBlock();
-
+ 
+/* ===================== IMAGE UPLOAD (compressed to a data URL, no hosting needed) ===================== */
+let pendingImageDataUrl = null;
+ 
+function compressImageFile(file, maxDim, quality){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => reject(new Error('bad image'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('read failed'));
+    reader.readAsDataURL(file);
+  });
+}
+ 
+document.getElementById('f-image-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  const statusEl = document.getElementById('image-status');
+  const previewEl = document.getElementById('image-preview');
+  if(!file) return;
+  statusEl.textContent = 'Processing image…';
+  try{
+    const dataUrl = await compressImageFile(file, 700, 0.72);
+    pendingImageDataUrl = dataUrl;
+    previewEl.src = dataUrl;
+    previewEl.style.display = 'block';
+    const approxKB = Math.round((dataUrl.length * 0.75) / 1024);
+    statusEl.textContent = 'Ready (~' + approxKB + ' KB)';
+  }catch(err){
+    statusEl.textContent = 'Could not process that image — try a different file.';
+  }
+});
+ 
+/* ===================== EDIT EXISTING ITEM ===================== */
+function selectTypeButton(type){
+  const btn = document.querySelector('#type-select [data-type="' + type + '"]');
+  if(btn) btn.click();
+}
+function resetUploadForm(){
+  editingId = null;
+  pendingImageDataUrl = null;
+  document.getElementById('type-select').classList.remove('locked');
+  document.getElementById('editing-banner').style.display = 'none';
+  document.getElementById('upload-heading').textContent = 'Add to the shelf';
+  document.getElementById('upload-subheading').textContent = 'Choose a type, then fill it in. Upload a .docx to fill a section automatically.';
+  document.getElementById('publish-btn').textContent = 'Publish to shelf';
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-author').value = 'Aden';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-quote-text').value = '';
+  document.getElementById('image-preview').style.display = 'none';
+  document.getElementById('image-preview').src = '';
+  document.getElementById('image-status').textContent = '';
+  document.getElementById('f-image-file').value = '';
+  document.getElementById('chapters-holder').innerHTML = '';
+  chapterCounter = 0;
+  uploadType = 'novel';
+  selectTypeButton('novel');
+  addChapterBlock();
+}
+function startEdit(item){
+  editingId = item.id;
+  uploadType = item.type;
+  selectTypeButton(item.type);
+  document.getElementById('type-select').classList.add('locked');
+  document.getElementById('editing-banner').style.display = 'block';
+  document.getElementById('upload-heading').textContent = 'Edit "' + (item.title || 'Untitled') + '"';
+  document.getElementById('upload-subheading').textContent = 'Make your changes below, then save.';
+  document.getElementById('publish-btn').textContent = 'Save changes';
+ 
+  document.getElementById('f-title').value = item.title || '';
+  document.getElementById('f-author').value = item.author || 'Aden';
+  document.getElementById('f-desc').value = item.description || '';
+  document.getElementById('f-quote-text').value = item.quoteText || '';
+ 
+  const existingImage = item.coverImageUrl || item.imageUrl || null;
+  pendingImageDataUrl = existingImage;
+  const previewEl = document.getElementById('image-preview');
+  if(existingImage){ previewEl.src = existingImage; previewEl.style.display = 'block'; }
+  else{ previewEl.style.display = 'none'; }
+  document.getElementById('image-status').textContent = existingImage ? 'Current image shown below — choose a file to replace it.' : '';
+ 
+  document.getElementById('chapters-holder').innerHTML = '';
+  chapterCounter = 0;
+  if(item.chapters && item.chapters.length > 0){
+    item.chapters.forEach(ch => addChapterBlock(ch.title, ch.content));
+  }else{
+    addChapterBlock();
+  }
+ 
+  document.getElementById('view-reader').classList.remove('active');
+  document.getElementById('view-library').style.display = 'none';
+  document.getElementById('view-collection').style.display = 'none';
+  document.getElementById('view-upload').style.display = 'block';
+  tabUpload.classList.add('active'); tabLibrary.classList.remove('active');
+  document.getElementById('gate-panel').style.display = 'none';
+  document.getElementById('upload-panel').style.display = 'block';
+  window.scrollTo({ top: 0 });
+}
+document.getElementById('edit-item-btn').addEventListener('click', () => {
+  if(!isOwner || !currentItem) return;
+  startEdit(currentItem);
+});
+document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+  resetUploadForm();
+});
+ 
 /* ===================== PUBLISH ===================== */
 document.getElementById('publish-btn').addEventListener('click', async () => {
   if(!isOwner) return;
@@ -1115,15 +1371,20 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
   const author = document.getElementById('f-author').value.trim() || 'Aden';
   const desc = document.getElementById('f-desc').value.trim();
   statusEl.classList.remove('err');
-
-  let payload = { type: uploadType, title, author, description: desc, afterNote: '' };
-
+ 
+  let payload = { type: uploadType, title, author, description: desc };
+ 
   if(uploadType === 'quote'){
     const quoteText = document.getElementById('f-quote-text').value.trim();
     if(!quoteText){ statusEl.textContent = 'Please add the quote text.'; statusEl.classList.add('err'); return; }
     payload.quoteText = quoteText;
     payload.chapters = [];
     if(!payload.title) payload.title = quoteText.slice(0, 40) + (quoteText.length>40?'…':'');
+  }else if(uploadType === 'announcement'){
+    if(!title){ statusEl.textContent = 'Please add a title.'; statusEl.classList.add('err'); return; }
+    if(!desc){ statusEl.textContent = 'Please add a message.'; statusEl.classList.add('err'); return; }
+    payload.chapters = [];
+    payload.imageUrl = pendingImageDataUrl || null;
   }else{
     if(!title){ statusEl.textContent = 'Please add a title.'; statusEl.classList.add('err'); return; }
     const chapterBlocks = Array.from(document.getElementById('chapters-holder').querySelectorAll('.chapter-block'));
@@ -1133,32 +1394,55 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
     })).filter(c => c.content.trim().length > 0);
     if(chapters.length === 0){ statusEl.textContent = 'Please add at least one section with text.'; statusEl.classList.add('err'); return; }
     payload.chapters = chapters;
+    payload.coverImageUrl = pendingImageDataUrl || null;
   }
-
-  statusEl.textContent = 'Publishing…';
+ 
+  statusEl.textContent = editingId ? 'Saving…' : 'Publishing…';
   const btn = document.getElementById('publish-btn');
   btn.disabled = true;
   try{
-    payload.id = 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
-    payload.createdAt = new Date().toISOString();
-    items.push(payload);
-    await saveItems();
-
-    statusEl.textContent = '"' + payload.title + '" is now on the shelf.';
-    document.getElementById('f-title').value = '';
-    document.getElementById('f-desc').value = '';
-    document.getElementById('f-quote-text').value = '';
-    document.getElementById('chapters-holder').innerHTML = '';
-    chapterCounter = 0;
-    addChapterBlock();
-    renderShelves();
+    if(editingId){
+      const idx = items.findIndex(i => i.id === editingId);
+      if(idx === -1){ statusEl.textContent = 'Could not find that item anymore.'; statusEl.classList.add('err'); btn.disabled = false; return; }
+      const existing = items[idx];
+      payload.id = existing.id;
+      payload.createdAt = existing.createdAt;
+      payload.afterNote = existing.afterNote || '';
+      items[idx] = payload;
+      await saveItems();
+      const savedId = payload.id;
+      statusEl.textContent = 'Saved.';
+      resetUploadForm();
+      renderShelves();
+      openItem(savedId);
+    }else{
+      payload.id = 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
+      payload.createdAt = new Date().toISOString();
+      payload.afterNote = '';
+      items.push(payload);
+      await saveItems();
+ 
+      statusEl.textContent = '"' + payload.title + '" is now on the shelf.';
+      document.getElementById('f-title').value = '';
+      document.getElementById('f-desc').value = '';
+      document.getElementById('f-quote-text').value = '';
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('image-preview').src = '';
+      document.getElementById('image-status').textContent = '';
+      document.getElementById('f-image-file').value = '';
+      pendingImageDataUrl = null;
+      document.getElementById('chapters-holder').innerHTML = '';
+      chapterCounter = 0;
+      addChapterBlock();
+      renderShelves();
+    }
   }catch(e){
-    statusEl.textContent = 'Something went wrong publishing. Please try again.'; statusEl.classList.add('err');
+    statusEl.textContent = 'Something went wrong. Please try again.'; statusEl.classList.add('err');
   }finally{
     btn.disabled = false;
   }
 });
-
+ 
 /* ===================== QUICK NAV ===================== */
 document.getElementById('quick-nav').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-jump]');
@@ -1166,7 +1450,7 @@ document.getElementById('quick-nav').addEventListener('click', (e) => {
   const target = document.getElementById(btn.dataset.jump);
   if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
-
+ 
 /* ===================== READING PROGRESS BAR ===================== */
 window.addEventListener('scroll', () => {
   const bar = document.getElementById('progress-bar');
@@ -1180,7 +1464,7 @@ window.addEventListener('scroll', () => {
   const scrolled = Math.min(Math.max(-rect.top, 0), total);
   bar.style.width = Math.round((scrolled / total) * 100) + '%';
 });
-
+ 
 /* ===================== INIT ===================== */
 initTheme();
 loadItems();
