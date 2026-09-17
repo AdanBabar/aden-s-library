@@ -126,17 +126,30 @@ body{
 }
 .shelf-heading::before{ content:''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display:inline-block; }
 
-.collection-grid{ display:flex; flex-wrap: wrap; justify-content: center; gap: 22px; margin-bottom: 22px; padding: 10px 0; }
+.collection-grid{ display:flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
 .collection-tile{
-  width: clamp(140px, 26vw, 200px); height: clamp(140px, 26vw, 200px); border-radius: 50%;
-  background: var(--surface); border: 1px solid var(--line);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; cursor:pointer; padding: 14px; transition: all 0.15s ease; flex-shrink: 0;
+  width: 100%; border-radius: 10px;
+  background: radial-gradient(circle at 15% 20%, var(--tint-article), var(--surface) 65%);
+  border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  display:flex; align-items:center; justify-content:space-between; gap: 16px;
+  text-align:left; cursor:pointer; padding: 24px 26px; box-sizing: border-box;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-.collection-tile:hover{ border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.18); }
-.collection-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: clamp(15px, 3.2vw, 19px); color: var(--ink); line-height: 1.2; }
-.collection-title span{ display:block; font-family:'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.03em; margin-top: 5px; }
-.collection-hint{ margin-top: 10px; font-family:'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.collection-tile:hover{
+  border-color: var(--accent); transform: translateX(4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+.collection-tile-text{ display:flex; flex-direction:column; }
+.collection-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: clamp(20px, 4.2vw, 24px); color: var(--ink); line-height: 1.2; }
+.collection-title span{ display:block; font-family:'IBM Plex Mono', monospace; font-size: 11.5px; font-weight: 600; color: var(--ink-faint); letter-spacing: 0.03em; margin-top: 6px; }
+.collection-hint{ margin-top: 10px; font-family:'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); }
+.collection-arrow{
+  flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-size: 20px; color: var(--accent);
+  transition: all 0.2s ease;
+}
+.collection-tile:hover .collection-arrow{ background: var(--accent); color: var(--bg); border-color: var(--accent); }
 
 .collection-header{
   margin-bottom: 26px; padding: 24px 26px; background: var(--surface); border: 1px solid var(--line);
@@ -340,6 +353,8 @@ body{
   .theme-switch button{ padding: 5px 8px; font-size: 9.5px; }
   .nav-tabs button{ padding: 8px 12px; font-size: 10.5px; }
   .collection-header-title{ font-size: 26px; }
+  .collection-tile{ padding: 18px 18px; }
+  .collection-arrow{ width: 38px; height: 38px; font-size: 17px; }
   .announce-card img{ width: 52px; height: 52px; }
 
   .quick-nav{ overflow-x: auto; flex-wrap: nowrap; -ms-overflow-style: none; scrollbar-width: none; padding: 8px 0; margin-bottom: 18px; }
@@ -444,16 +459,25 @@ body{
 
     <div class="collection-grid">
       <button class="collection-tile" data-collection="novel">
-        <div class="collection-title">Novels <span>— By Aden Babar</span></div>
-        <div class="collection-hint">Click to read →</div>
+        <div class="collection-tile-text">
+          <div class="collection-title">Novels <span>— By Aden Babar</span></div>
+          <div class="collection-hint">Click to read</div>
+        </div>
+        <div class="collection-arrow">→</div>
       </button>
       <button class="collection-tile" data-collection="article">
-        <div class="collection-title">Articles <span>— By Aden Babar</span></div>
-        <div class="collection-hint">Click to read →</div>
+        <div class="collection-tile-text">
+          <div class="collection-title">Articles <span>— By Aden Babar</span></div>
+          <div class="collection-hint">Click to read</div>
+        </div>
+        <div class="collection-arrow">→</div>
       </button>
       <button class="collection-tile" data-collection="quote">
-        <div class="collection-title">Quotes <span>— By Aden Babar</span></div>
-        <div class="collection-hint">Click to read →</div>
+        <div class="collection-tile-text">
+          <div class="collection-title">Quotes <span>— By Aden Babar</span></div>
+          <div class="collection-hint">Click to read</div>
+        </div>
+        <div class="collection-arrow">→</div>
       </button>
     </div>
   </div>
