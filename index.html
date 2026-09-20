@@ -278,6 +278,23 @@ body{
 .reader-desc{ color: var(--ink-soft); max-width: 580px; margin-top: 10px; font-size: 15px; font-weight: 500; }
 .reader-rating{ font-size: 13px; color: var(--accent); letter-spacing: 2px; margin-top: 8px; }
 
+.audio-bar{
+  display:flex; align-items:center; gap: 10px; flex-wrap: wrap;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px 16px; margin: 20px 0; transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+.audio-btn{
+  font-family:'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+  background: var(--bg); border: 1px solid var(--line); color: var(--ink); border-radius: 20px;
+  padding: 8px 16px; cursor: pointer; transition: all 0.15s ease;
+}
+.audio-btn:hover{ border-color: var(--accent); color: var(--accent); }
+.audio-speed{
+  font-family:'IBM Plex Mono', monospace; font-size: 11.5px; font-weight: 600; background: var(--bg);
+  border: 1px solid var(--line); color: var(--ink-soft); border-radius: 6px; padding: 7px 8px; cursor: pointer;
+}
+.audio-status{ font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
+
 .reader-body{ display:flex; flex-direction:column; gap: 18px; margin-top: 28px; width: 100%; }
 .chap-nav{ display:flex; flex-direction:row; flex-wrap:wrap; gap: 4px 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
 .chap-nav button{ text-align:left; background:none; border:none; color: var(--ink-soft); font-family:'IBM Plex Mono', monospace; font-weight:600; font-size: 12.5px; padding: 6px 0; cursor:pointer; }
@@ -579,6 +596,21 @@ body{
       </div>
     </div>
 
+    <div class="audio-bar" id="audio-bar">
+      <button class="audio-btn" id="audio-play">🔊 Read aloud</button>
+      <button class="audio-btn" id="audio-pause" style="display:none;">⏸ Pause</button>
+      <button class="audio-btn" id="audio-resume" style="display:none;">▶ Resume</button>
+      <button class="audio-btn" id="audio-stop" style="display:none;">⏹ Stop</button>
+      <select class="audio-speed" id="audio-speed">
+        <option value="0.75">0.75×</option>
+        <option value="1" selected>1×</option>
+        <option value="1.25">1.25×</option>
+        <option value="1.5">1.5×</option>
+        <option value="2">2×</option>
+      </select>
+      <span class="audio-status" id="audio-status"></span>
+    </div>
+
     <div class="reader-body" id="reader-body">
       <div class="chap-nav" id="chap-nav"></div>
       <div class="watermark-wrap" id="content-wrap">
@@ -878,6 +910,7 @@ function openItem(id){
   if(!currentItem) return;
   currentChapterIdx = 0;
   window.scrollTo({ top: 0 });
+  stopAudio();
 
   document.getElementById('view-library').style.display = 'none';
   document.getElementById('view-upload').style.display = 'none';
@@ -902,6 +935,8 @@ function openItem(id){
   const quoteBlockEl = document.getElementById('quote-block');
   const reviewsSection = document.querySelector('.reviews-section');
   const afterNoteSection = document.getElementById('after-note-section');
+  const audioBar = document.getElementById('audio-bar');
+  audioBar.style.display = (currentItem.type === 'announcement' || !('speechSynthesis' in window)) ? 'none' : 'flex';
 
   if(currentItem.type === 'announcement'){
     chapNav.style.display = 'none';
@@ -951,7 +986,7 @@ function renderChapterNav(){
     const btn = document.createElement('button');
     btn.textContent = ch.title || ((currentItem.type==='novel'?'Chapter ':'Section ') + (i+1));
     if(i === currentChapterIdx) btn.classList.add('active');
-    btn.addEventListener('click', () => { currentChapterIdx = i; renderChapterNav(); renderChapter(); });
+    btn.addEventListener('click', () => { stopAudio(); currentChapterIdx = i; renderChapterNav(); renderChapter(); });
     nav.appendChild(btn);
   });
 }
@@ -961,6 +996,67 @@ function renderChapter(){
   const label = currentItem.type==='novel' ? 'Chapter ' : 'Section ';
   el.innerHTML = '<h3>' + escapeHtml(ch.title || (label + (currentChapterIdx+1))) + '</h3>' + escapeHtml(ch.content);
 }
+
+/* ===================== READ ALOUD (Web Speech API — no audio files, no hosting needed) ===================== */
+let currentUtterance = null;
+
+function getReadableText(){
+  if(!currentItem) return '';
+  if(currentItem.type === 'quote') return currentItem.quoteText || '';
+  const ch = currentItem.chapters[currentChapterIdx];
+  return ch ? (ch.title ? ch.title + '. ' + ch.content : ch.content) : '';
+}
+
+function setAudioButtons(state){
+  // state: 'idle' | 'playing' | 'paused'
+  document.getElementById('audio-play').style.display = state === 'idle' ? 'inline-block' : 'none';
+  document.getElementById('audio-pause').style.display = state === 'playing' ? 'inline-block' : 'none';
+  document.getElementById('audio-resume').style.display = state === 'paused' ? 'inline-block' : 'none';
+  document.getElementById('audio-stop').style.display = state === 'idle' ? 'none' : 'inline-block';
+}
+
+function playAudio(){
+  if(!('speechSynthesis' in window)) return;
+  const text = getReadableText();
+  if(!text.trim()) return;
+  window.speechSynthesis.cancel();
+  const rate = parseFloat(document.getElementById('audio-speed').value) || 1;
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.rate = rate;
+  currentUtterance.onend = () => { setAudioButtons('idle'); document.getElementById('audio-status').textContent = ''; };
+  currentUtterance.onerror = () => { setAudioButtons('idle'); document.getElementById('audio-status').textContent = 'Playback stopped.'; };
+  window.speechSynthesis.speak(currentUtterance);
+  setAudioButtons('playing');
+  document.getElementById('audio-status').textContent = 'Reading…';
+}
+function pauseAudio(){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.pause();
+  setAudioButtons('paused');
+  document.getElementById('audio-status').textContent = 'Paused.';
+}
+function resumeAudio(){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.resume();
+  setAudioButtons('playing');
+  document.getElementById('audio-status').textContent = 'Reading…';
+}
+function stopAudio(){
+  if('speechSynthesis' in window){ window.speechSynthesis.cancel(); }
+  setAudioButtons('idle');
+  const statusEl = document.getElementById('audio-status');
+  if(statusEl) statusEl.textContent = '';
+}
+
+document.getElementById('audio-play').addEventListener('click', playAudio);
+document.getElementById('audio-pause').addEventListener('click', pauseAudio);
+document.getElementById('audio-resume').addEventListener('click', resumeAudio);
+document.getElementById('audio-stop').addEventListener('click', stopAudio);
+document.getElementById('audio-speed').addEventListener('change', () => {
+  if(currentUtterance && window.speechSynthesis.speaking && !window.speechSynthesis.paused){
+    playAudio(); // restart at the new speed from the beginning of the current chapter/quote
+  }
+});
 
 function renderWatermark(){
   const tile = document.getElementById('watermark-tile');
@@ -1101,6 +1197,7 @@ document.getElementById('submit-review').addEventListener('click', async () => {
 
 /* ---- back / delete (inline confirm, no native dialogs) ---- */
 document.getElementById('back-to-shelf').addEventListener('click', () => {
+  stopAudio();
   document.getElementById('view-reader').classList.remove('active');
   document.getElementById('view-library').style.display = 'block';
   currentItem = null;
@@ -1132,6 +1229,7 @@ document.getElementById('confirm-delete').addEventListener('click', async () => 
 const tabLibrary = document.getElementById('tab-library');
 const tabUpload = document.getElementById('tab-upload');
 tabLibrary.addEventListener('click', () => {
+  stopAudio();
   document.getElementById('view-reader').classList.remove('active');
   document.getElementById('view-upload').style.display = 'none';
   document.getElementById('view-collection').style.display = 'none';
@@ -1139,6 +1237,7 @@ tabLibrary.addEventListener('click', () => {
   tabLibrary.classList.add('active'); tabUpload.classList.remove('active');
 });
 tabUpload.addEventListener('click', () => {
+  stopAudio();
   document.getElementById('view-reader').classList.remove('active');
   document.getElementById('view-library').style.display = 'none';
   document.getElementById('view-collection').style.display = 'none';
@@ -1360,6 +1459,7 @@ function startEdit(item){
 }
 document.getElementById('edit-item-btn').addEventListener('click', () => {
   if(!isOwner || !currentItem) return;
+  stopAudio();
   startEdit(currentItem);
 });
 document.getElementById('cancel-edit-btn').addEventListener('click', () => {
