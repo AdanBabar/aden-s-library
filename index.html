@@ -102,19 +102,31 @@ body{
 .reviews-feed{ margin-bottom: 22px; }
 .section-heading{
   font-family:'Fraunces', serif; font-weight: 700; font-size: 22px; margin: 0 0 16px;
-  display:flex; align-items:center; gap:10px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
 }
-.feed-row{ display:block; }
-@keyframes feedFadeIn{ from{ opacity:0; transform: translateY(5px); } to{ opacity:1; transform: translateY(0); } }
+.feed-row{ display:flex; justify-content:center; }
+@keyframes feedFadeIn{ from{ opacity:0; transform: translateY(6px) scale(0.98); } to{ opacity:1; transform: translateY(0) scale(1); } }
 .feed-card{
-  max-width: 440px; background: var(--surface); border: 1px solid var(--line);
-  border-radius: 6px; padding: 18px 20px; transition: background-color 0.25s ease, border-color 0.25s ease;
-  animation: feedFadeIn 0.4s ease;
+  max-width: 460px; width: 100%; position: relative; overflow: hidden; text-align: center;
+  background: radial-gradient(circle at 50% 0%, var(--tint-quote), var(--surface) 65%);
+  border: 1px solid var(--line); border-radius: 14px; padding: 30px 28px 24px;
+  box-shadow: 0 0 0 1px transparent, 0 10px 28px rgba(0,0,0,0.16);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+  animation: feedFadeIn 0.45s ease;
 }
-.feed-stars{ color: var(--accent); font-size: 13px; margin-bottom: 8px; letter-spacing: 2px; }
-.feed-comment{ font-size: 13.5px; color: var(--ink); margin-bottom: 10px; font-weight: 500; line-height: 1.5; }
-.feed-meta{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
-.feed-counter{ font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.03em; }
+.feed-card::before{
+  content:''; position:absolute; top:0; left:50%; transform: translateX(-50%); width: 70%; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.feed-quote-mark{ font-family:'Cormorant Garamond', serif; font-size: 44px; color: var(--accent); line-height: 0.4; margin-bottom: 4px; display:block; }
+.feed-avatar{
+  width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 12px; display:flex; align-items:center; justify-content:center;
+  background: var(--accent); color: var(--bg); font-family:'Fraunces', serif; font-weight: 700; font-size: 18px;
+}
+.feed-stars{ color: var(--accent); font-size: 15px; margin-bottom: 10px; letter-spacing: 3px; }
+.feed-comment{ font-size: 14.5px; color: var(--ink); margin-bottom: 14px; font-weight: 500; line-height: 1.6; font-style: italic; }
+.feed-meta{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.feed-counter{ font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); margin-top: 12px; letter-spacing: 0.03em; }
 .empty-feed{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
 
 /* ---------- shelves (carousels) ---------- */
@@ -814,10 +826,13 @@ function showFeedCard(){
   const idx = feedIndex % list.length;
   const r = list[idx];
   const excerpt = (r.comment||'').slice(0,160) + ((r.comment||'').length>160?'…':'');
+  const initial = (r.name || 'R').trim().charAt(0).toUpperCase();
   row.innerHTML = `
     <div class="feed-card">
+      <span class="feed-quote-mark">“</span>
+      <div class="feed-avatar">${escapeHtml(initial)}</div>
       <div class="feed-stars">${starString(r.rating)}</div>
-      <div class="feed-comment">"${escapeHtml(excerpt)}"</div>
+      <div class="feed-comment">${escapeHtml(excerpt)}</div>
       <div class="feed-meta">${escapeHtml(r.name||'Reader')} on ${escapeHtml(r.itemTitle)}</div>
       <div class="feed-counter">${idx+1} / ${list.length}</div>
     </div>
