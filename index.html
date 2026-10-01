@@ -104,14 +104,17 @@ body{
   font-family:'Fraunces', serif; font-weight: 700; font-size: 22px; margin: 0 0 16px;
   display:flex; align-items:center; gap:10px;
 }
-.feed-row{ display:flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; }
+.feed-row{ display:block; }
+@keyframes feedFadeIn{ from{ opacity:0; transform: translateY(5px); } to{ opacity:1; transform: translateY(0); } }
 .feed-card{
-  min-width: 240px; max-width: 240px; background: var(--surface); border: 1px solid var(--line);
-  border-radius: 4px; padding: 16px; flex-shrink: 0; transition: background-color 0.25s ease, border-color 0.25s ease;
+  max-width: 440px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 6px; padding: 18px 20px; transition: background-color 0.25s ease, border-color 0.25s ease;
+  animation: feedFadeIn 0.4s ease;
 }
 .feed-stars{ color: var(--accent); font-size: 13px; margin-bottom: 8px; letter-spacing: 2px; }
 .feed-comment{ font-size: 13.5px; color: var(--ink); margin-bottom: 10px; font-weight: 500; line-height: 1.5; }
 .feed-meta{ font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+.feed-counter{ font-family:'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.03em; }
 .empty-feed{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
 
 /* ---------- shelves (carousels) ---------- */
@@ -294,6 +297,12 @@ body{
   border: 1px solid var(--line); color: var(--ink-soft); border-radius: 6px; padding: 7px 8px; cursor: pointer;
 }
 .audio-status{ font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
+.audio-notice{
+  font-size: 13px; font-weight: 500; color: var(--ink-soft); background: var(--surface-2);
+  border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px;
+  padding: 12px 14px; margin: -8px 0 20px; line-height: 1.5;
+}
+.audio-notice b{ color: var(--ink); }
 
 .reader-body{ display:flex; flex-direction:column; gap: 18px; margin-top: 28px; width: 100%; }
 .chap-nav{ display:flex; flex-direction:row; flex-wrap:wrap; gap: 4px 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
@@ -384,8 +393,7 @@ body{
 
   .shelf-section{ padding: 16px 14px 14px; border-radius: 6px; margin-bottom: 16px; }
   .shelf-heading{ font-size: 18px; }
-  .feed-row{ gap: 10px; }
-  .feed-card{ min-width: 200px; max-width: 200px; padding: 13px; }
+  .feed-card{ max-width: 100%; padding: 14px 16px; }
 
   .panel{ padding: 20px 16px; }
   .gate{ padding: 40px 10px; }
@@ -610,6 +618,7 @@ body{
       </select>
       <span class="audio-status" id="audio-status"></span>
     </div>
+    <div class="audio-notice" id="audio-notice" style="display:none;"></div>
 
     <div class="reader-body" id="reader-body">
       <div class="chap-nav" id="chap-nav"></div>
@@ -771,26 +780,52 @@ function avgRatingFor(itemId){
   return { avg, count: list.length };
 }
 
-/* ===================== SITEWIDE REVIEWS FEED ===================== */
+/* ===================== SITEWIDE REVIEWS FEED (auto-rotating, one review every 3s) ===================== */
+let feedRotateTimer = null;
+let feedIndex = 0;
+let feedPaused = false;
+
+function sortedFeedReviews(){
+  return [...allReviews].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
 function renderFeed(){
+  if(feedRotateTimer){ clearInterval(feedRotateTimer); feedRotateTimer = null; }
   const row = document.getElementById('feed-row');
   if(allReviews.length === 0){
     row.innerHTML = '<div class="empty-feed">No reviews yet — be the first to leave one on any piece.</div>';
     return;
   }
-  const recent = [...allReviews].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 10);
-  row.innerHTML = '';
-  recent.forEach(r => {
-    const card = document.createElement('div');
-    card.className = 'feed-card';
-    card.innerHTML = `
-      <div class="feed-stars">${starString(r.rating)}</div>
-      <div class="feed-comment">"${escapeHtml((r.comment||'').slice(0,110))}${(r.comment||'').length>110?'…':''}"</div>
-      <div class="feed-meta">${escapeHtml(r.name||'Reader')} on ${escapeHtml(r.itemTitle)}</div>
-    `;
-    row.appendChild(card);
-  });
+  feedIndex = 0;
+  showFeedCard();
+  feedRotateTimer = setInterval(() => {
+    if(feedPaused) return;
+    const list = sortedFeedReviews();
+    if(list.length === 0) return;
+    feedIndex = (feedIndex + 1) % list.length;
+    showFeedCard();
+  }, 3000);
 }
+
+function showFeedCard(){
+  const row = document.getElementById('feed-row');
+  const list = sortedFeedReviews();
+  if(list.length === 0) return;
+  const idx = feedIndex % list.length;
+  const r = list[idx];
+  const excerpt = (r.comment||'').slice(0,160) + ((r.comment||'').length>160?'…':'');
+  row.innerHTML = `
+    <div class="feed-card">
+      <div class="feed-stars">${starString(r.rating)}</div>
+      <div class="feed-comment">"${escapeHtml(excerpt)}"</div>
+      <div class="feed-meta">${escapeHtml(r.name||'Reader')} on ${escapeHtml(r.itemTitle)}</div>
+      <div class="feed-counter">${idx+1} / ${list.length}</div>
+    </div>
+  `;
+}
+
+document.getElementById('feed-row').addEventListener('mouseenter', () => { feedPaused = true; });
+document.getElementById('feed-row').addEventListener('mouseleave', () => { feedPaused = false; });
 
 /* ===================== SHELVES (carousels) ===================== */
 let currentCollectionType = null;
@@ -936,7 +971,20 @@ function openItem(id){
   const reviewsSection = document.querySelector('.reviews-section');
   const afterNoteSection = document.getElementById('after-note-section');
   const audioBar = document.getElementById('audio-bar');
-  audioBar.style.display = (currentItem.type === 'announcement' || !('speechSynthesis' in window)) ? 'none' : 'flex';
+  const audioNotice = document.getElementById('audio-notice');
+  const hasSpeech = 'speechSynthesis' in window;
+  const inApp = isInAppBrowser();
+  audioBar.style.display = (currentItem.type === 'announcement' || !hasSpeech) ? 'none' : 'flex';
+  if(currentItem.type === 'announcement'){
+    audioNotice.style.display = 'none';
+  }else if(inApp){
+    audioNotice.style.display = 'block';
+    audioNotice.innerHTML = hasSpeech
+      ? 'Opened from Instagram or a similar app? <b>Read Aloud may stay silent here.</b> Tap the ⋯ / ⋮ menu above and choose "Open in Browser" (Safari or Chrome) for the best experience.'
+      : '<b>Read Aloud isn\'t available in this in-app browser.</b> Tap the ⋯ / ⋮ menu above and choose "Open in Browser" (Safari or Chrome) to use it.';
+  }else{
+    audioNotice.style.display = 'none';
+  }
 
   if(currentItem.type === 'announcement'){
     chapNav.style.display = 'none';
@@ -1000,6 +1048,11 @@ function renderChapter(){
 /* ===================== READ ALOUD (Web Speech API — no audio files, no hosting needed) ===================== */
 let currentUtterance = null;
 
+function isInAppBrowser(){
+  const ua = navigator.userAgent || '';
+  return /Instagram|FBAN|FBAV|Line\/|MicroMessenger|TikTok|Snapchat|Pinterest/i.test(ua);
+}
+
 function getReadableText(){
   if(!currentItem) return '';
   if(currentItem.type === 'quote') return currentItem.quoteText || '';
@@ -1028,6 +1081,18 @@ function playAudio(){
   window.speechSynthesis.speak(currentUtterance);
   setAudioButtons('playing');
   document.getElementById('audio-status').textContent = 'Reading…';
+
+  // Safety net: some in-app browsers (Instagram, Facebook, etc.) report speechSynthesis
+  // as available but never actually produce sound. Catch that silent failure here.
+  setTimeout(() => {
+    if(!window.speechSynthesis.speaking && !window.speechSynthesis.paused){
+      setAudioButtons('idle');
+      document.getElementById('audio-status').textContent = '';
+      const notice = document.getElementById('audio-notice');
+      notice.style.display = 'block';
+      notice.innerHTML = '<b>Read Aloud didn\'t produce any sound.</b> If you opened this link from Instagram or another app, tap the ⋯ / ⋮ menu above and choose "Open in Browser" (Safari or Chrome), then try again.';
+    }
+  }, 500);
 }
 function pauseAudio(){
   if(!('speechSynthesis' in window)) return;
