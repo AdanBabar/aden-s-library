@@ -32,6 +32,13 @@ html[data-theme="sepia"]{
   --card-shade-1:#5B4A2E; --card-shade-2:#75613C; --card-shade-3:#8C7A50;
   --tint-novel: rgba(43,35,19,0.04); --tint-article: rgba(150,112,31,0.08); --tint-quote: rgba(150,112,31,0.13);
 }
+html[data-theme="sage"]{
+  --bg: #EFEDE2; --surface: #F6F4EA; --surface-2: #E3E0D1; --line: #D3CFBC;
+  --ink: #2E3328; --ink-soft: #5B6350; --ink-faint: #8B9280; --accent: #7A8C6B;
+  --reading-surface: #FAF9F1; --reading-line: #DEDBC9;
+  --card-shade-1:#5B6350; --card-shade-2:#7A8C6B; --card-shade-3:#9CA688;
+  --tint-novel: rgba(46,51,40,0.035); --tint-article: rgba(122,140,107,0.09); --tint-quote: rgba(122,140,107,0.14);
+}
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -85,6 +92,27 @@ body{
   line-height: 1.1; margin: 0 0 14px; max-width: 620px; letter-spacing: -0.01em;
 }
 .hero p{ color: var(--ink-soft); max-width: 480px; font-size: 16px; margin: 0; font-weight: 500; }
+
+.stats-strip{ display:flex; flex-wrap: wrap; gap: 14px; margin-bottom: 28px; }
+.stat-card{
+  flex: 1; min-width: 110px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 16px 18px; transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+.stat-number{ font-family:'Fraunces', serif; font-weight: 700; font-size: 26px; color: var(--accent); line-height: 1; }
+.stat-label{ font-family:'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); margin-top: 6px; }
+
+.newsletter-bar{
+  margin-top: 36px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 28px 30px; display:flex; flex-wrap: wrap; align-items:center; justify-content:space-between; gap: 20px;
+}
+.newsletter-title{ font-family:'Fraunces', serif; font-weight: 700; font-size: 19px; color: var(--ink); }
+.newsletter-sub{ font-size: 13px; color: var(--ink-soft); font-weight: 500; margin-top: 4px; max-width: 360px; }
+.newsletter-form{ display:flex; gap: 10px; flex-wrap: wrap; }
+.newsletter-form input{
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 11px 14px;
+  font-family:'Inter', sans-serif; font-size: 14px; color: var(--ink); min-width: 220px;
+}
+.newsletter-form input:focus{ outline: none; border-color: var(--accent); }
 
 /* ---------- sitewide reviews feed ---------- */
 .quick-nav{
@@ -226,6 +254,9 @@ body{
 .card-quote .card-title{ font-family:'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 15.5px; -webkit-line-clamp: 4; }
 .card-quote .card-author{ margin-top: 8px; }
 .card-readtime{ font-family:'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink-faint); letter-spacing: 0.03em; flex-shrink: 0; }
+.card-progress-track{ height: 4px; background: var(--line); border-radius: 3px; overflow:hidden; flex-shrink: 0; margin-top: 2px; }
+.card-progress-fill{ height: 100%; background: var(--accent); border-radius: 3px; }
+.card-progress-label{ font-family:'IBM Plex Mono', monospace; font-size: 9px; color: var(--accent); font-weight: 700; letter-spacing: 0.02em; flex-shrink: 0; }
 
 /* ---------- panels / forms ---------- */
 .panel{ background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 32px; margin-bottom: 22px; transition: background-color 0.25s ease, border-color 0.25s ease; }
@@ -456,6 +487,7 @@ body{
           <button data-theme-btn="dark" class="active">Dark</button>
           <button data-theme-btn="light">Light</button>
           <button data-theme-btn="sepia">Sepia</button>
+          <button data-theme-btn="sage">Sage</button>
         </div>
       </div>
       <div class="nav-tabs">
@@ -473,6 +505,8 @@ body{
       <h1>Stories that pull you in.</h1>
       <p>Handpicked novels, articles, and quotes — easy to read, hard to put down.</p>
     </div>
+
+    <div class="stats-strip" id="stats-strip"></div>
 
     <div class="quick-nav" id="quick-nav">
       <button data-jump="section-announcements">Announcements</button>
@@ -516,6 +550,18 @@ body{
         </div>
         <div class="collection-arrow">→</div>
       </button>
+    </div>
+
+    <div class="newsletter-bar">
+      <div class="newsletter-text">
+        <div class="newsletter-title">Never miss a new story</div>
+        <div class="newsletter-sub">Leave your email and Aden will know you're interested — no spam, just an easy way to be found.</div>
+      </div>
+      <div class="newsletter-form">
+        <input type="text" id="newsletter-email" placeholder="you@example.com">
+        <button class="btn btn-primary" id="newsletter-submit">Subscribe</button>
+      </div>
+      <div class="status-msg" id="newsletter-status" style="margin-top:8px;"></div>
     </div>
   </div>
 
@@ -770,6 +816,7 @@ async function loadItems(){
     items = r && r.json ? JSON.parse(r.json) : [];
   }catch(e){ items = []; }
   renderShelves();
+  renderStats();
 }
 async function loadAllReviews(){
   try{
@@ -777,6 +824,23 @@ async function loadAllReviews(){
     allReviews = r && r.json ? JSON.parse(r.json) : [];
   }catch(e){ allReviews = []; }
   renderFeed();
+  renderStats();
+}
+function renderStats(){
+  const el = document.getElementById('stats-strip');
+  if(!el) return;
+  const novelCount = items.filter(i => i.type === 'novel').length;
+  const articleCount = items.filter(i => i.type === 'article').length;
+  const quoteCount = items.filter(i => i.type === 'quote').length;
+  const reviewCount = allReviews.length;
+  const avgAll = reviewCount > 0 ? (allReviews.reduce((s,r) => s + r.rating, 0) / reviewCount).toFixed(1) : '–';
+  el.innerHTML = `
+    <div class="stat-card"><div class="stat-number">${novelCount}</div><div class="stat-label">Novels</div></div>
+    <div class="stat-card"><div class="stat-number">${articleCount}</div><div class="stat-label">Articles</div></div>
+    <div class="stat-card"><div class="stat-number">${quoteCount}</div><div class="stat-label">Quotes</div></div>
+    <div class="stat-card"><div class="stat-number">${reviewCount}</div><div class="stat-label">Reviews</div></div>
+    <div class="stat-card"><div class="stat-number">${avgAll}</div><div class="stat-label">Avg rating</div></div>
+  `;
 }
 async function saveItems(){
   await storageAPI.set('library-items', { json: JSON.stringify(items) });
@@ -784,6 +848,30 @@ async function saveItems(){
 async function saveReviews(){
   await storageAPI.set('all-reviews', { json: JSON.stringify(allReviews) });
 }
+
+document.getElementById('newsletter-submit').addEventListener('click', async () => {
+  const input = document.getElementById('newsletter-email');
+  const statusEl = document.getElementById('newsletter-status');
+  const email = input.value.trim();
+  statusEl.classList.remove('err');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    statusEl.textContent = 'Please enter a valid email address.';
+    statusEl.classList.add('err');
+    return;
+  }
+  statusEl.textContent = 'Saving…';
+  try{
+    const r = await storageAPI.get('newsletter-signups');
+    const list = r && r.json ? JSON.parse(r.json) : [];
+    list.push({ email, createdAt: new Date().toISOString() });
+    await storageAPI.set('newsletter-signups', { json: JSON.stringify(list) });
+    statusEl.textContent = "You're on the list!";
+    input.value = '';
+  }catch(e){
+    statusEl.textContent = 'Could not save — please try again.';
+    statusEl.classList.add('err');
+  }
+});
 
 function avgRatingFor(itemId){
   const list = allReviews.filter(r => r.itemId === itemId);
@@ -864,6 +952,11 @@ function renderShelf(type, containerId){
     const coverHtml = item.coverImageUrl ? '<img src="'+item.coverImageUrl+'" alt="" class="card-cover">' : '';
     const card = document.createElement('button');
 
+    const savedPct = getSavedProgress(item.id);
+    const progressHtml = savedPct > 0
+      ? '<div class="card-progress-track"><div class="card-progress-fill" style="width:'+savedPct+'%;"></div></div><div class="card-progress-label">'+(savedPct>=99?'Finished':savedPct+'% read')+'</div>'
+      : '';
+
     if(type === 'novel'){
       card.className = 'card card-novel';
       const excerpt = (item.description||'').slice(0,70) + ((item.description||'').length>70?'…':'');
@@ -875,6 +968,7 @@ function renderShelf(type, containerId){
           ${excerpt ? '<div class="card-excerpt">'+escapeHtml(excerpt)+'</div>' : ''}
           <div class="card-author">by ${escapeHtml(item.author || 'Aden')}</div>
           <div class="card-readtime">${readingTimeFor(item)}</div>
+          ${progressHtml}
           ${ratingHtml}
         </div>`;
     }else if(type === 'article'){
@@ -888,6 +982,7 @@ function renderShelf(type, containerId){
           ${excerpt ? '<div class="card-excerpt">'+escapeHtml(excerpt)+'</div>' : ''}
           <div class="card-author">by ${escapeHtml(item.author || 'Aden')}</div>
           <div class="card-readtime">${readingTimeFor(item)}</div>
+          ${progressHtml}
           ${ratingHtml}
         </div>`;
     }else{
@@ -1634,7 +1729,22 @@ document.getElementById('quick-nav').addEventListener('click', (e) => {
   if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-/* ===================== READING PROGRESS BAR ===================== */
+/* ===================== READING PROGRESS BAR (also saved per-browser, per item) ===================== */
+function getSavedProgress(itemId){
+  try{
+    const raw = localStorage.getItem('reading-progress');
+    const map = raw ? JSON.parse(raw) : {};
+    return map[itemId] || 0;
+  }catch(e){ return 0; }
+}
+function saveProgress(itemId, pct){
+  try{
+    const raw = localStorage.getItem('reading-progress');
+    const map = raw ? JSON.parse(raw) : {};
+    map[itemId] = Math.max(map[itemId] || 0, pct);
+    localStorage.setItem('reading-progress', JSON.stringify(map));
+  }catch(e){}
+}
 window.addEventListener('scroll', () => {
   const bar = document.getElementById('progress-bar');
   const reader = document.getElementById('view-reader');
@@ -1643,9 +1753,16 @@ window.addEventListener('scroll', () => {
   if(!wrap) return;
   const rect = wrap.getBoundingClientRect();
   const total = rect.height - window.innerHeight;
-  if(total <= 0){ bar.style.width = '100%'; return; }
-  const scrolled = Math.min(Math.max(-rect.top, 0), total);
-  bar.style.width = Math.round((scrolled / total) * 100) + '%';
+  let pct;
+  if(total <= 0){ pct = 100; }
+  else{
+    const scrolled = Math.min(Math.max(-rect.top, 0), total);
+    pct = Math.round((scrolled / total) * 100);
+  }
+  bar.style.width = pct + '%';
+  if(currentItem && currentItem.type !== 'announcement' && currentItem.type !== 'quote'){
+    saveProgress(currentItem.id, pct);
+  }
 });
 
 /* ===================== INIT ===================== */
