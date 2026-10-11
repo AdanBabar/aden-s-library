@@ -186,13 +186,16 @@ body{
 .car-arrows button{ width:30px; height:30px; border-radius:50%; border:1px solid var(--line); background:var(--bg); color:var(--ink-soft); cursor:pointer; font-size:17px; line-height:1; display:flex; align-items:center; justify-content:center; transition: all 0.15s ease; }
 .car-arrows button:hover{ border-color: var(--accent); color: var(--accent); }
 .bookshelf.carousel{
-  display:flex; gap: 20px; overflow-x:auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  display:flex; align-items:flex-start; gap: 22px; overflow-x:auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
   padding: 14px 12px 18px; margin: 0 -12px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%);
 }
 .bookshelf.carousel::-webkit-scrollbar{ display:none; }
-.carousel .book{ flex: 0 0 148px; scroll-snap-align: start; }
+.carousel .book{ flex: 0 0 152px; width:152px; scroll-snap-align: start; content-visibility:visible; contain:none; align-self:flex-start; }
+.carousel .book-cover{ width:100%; }
+.carousel .book:hover .book-cover{ transform:none; box-shadow: inset -3px 0 0 rgba(0,0,0,0.22), 0 14px 22px -8px rgba(0,0,0,0.65); }
+.carousel .book:hover .book-title{ color:var(--accent); }
 
 /* Footer */
 .site-footer{ margin-top: 70px; padding-top: 34px; border-top: 1px solid var(--line); }
@@ -238,15 +241,16 @@ body{
 .book-gen-title{ font-family:'Fraunces', serif; font-weight:700; font-size:15px; line-height:1.2; margin-top:18px; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
 .book-gen-author{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.14em; text-transform:uppercase; opacity:0.8; }
 .book-badge{ position:absolute; top:7px; left:7px; font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:8.5px; letter-spacing:0.1em; text-transform:uppercase; background:rgba(0,0,0,0.62); color:#fff; padding:3px 6px; border-radius:3px; }
-.book-ring{ position:absolute; right:7px; bottom:7px; width:34px; height:34px; border-radius:50%; background: conic-gradient(var(--accent) calc(var(--p) * 1%), rgba(0,0,0,0.55) 0); display:flex; align-items:center; justify-content:center; }
-.book-ring i{ font-style:normal; width:26px; height:26px; border-radius:50%; background:rgba(0,0,0,0.82); color:#fff; font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:8px; display:flex; align-items:center; justify-content:center; }
-.book-title{ font-family:'Fraunces', serif; font-weight:700; font-size:14px; line-height:1.25; margin-top:8px; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.book-done{ display:flex; align-items:center; gap:6px; margin-top:6px; font-family:'IBM Plex Mono', monospace; font-size:9.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--accent); }
+.book-done span{ flex:0 0 18px; height:2px; background:var(--accent); border-radius:2px; }
+.book-title{ font-family:'Fraunces', serif; font-weight:700; font-size:14px; line-height:1.25; min-height:2.5em; margin-top:8px; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .book-author{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--ink-faint); margin-top:3px; }
 .book-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600; color:var(--accent); margin-top:2px; }
 .show-more{ grid-column: 1 / -1; justify-self:center; }
 .shelf-sub-row{ display:flex; justify-content:space-between; align-items:center; margin: 6px 0 16px; }
 .shelf-sub-row ~ .shelf-sub-row{ margin-top: 36px; }
-.shelf-subheading{ font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft); }
+.shelf-subheading{ font-family:'Fraunces', serif; font-size:24px; font-weight:800; letter-spacing:0.01em; color:var(--ink); display:flex; align-items:center; gap:12px; line-height:1; }
+.shelf-subheading::before{ content:''; width:4px; height:24px; border-radius:2px; background:var(--accent); }
 .view-all{ background:none; border:none; color:var(--accent); font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700; letter-spacing:0.05em; cursor:pointer; }
 .view-all:hover{ text-decoration:underline; }
 .empty-shelf{ font-family:'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-faint); }
@@ -466,7 +470,9 @@ body{
   .collection-tile{ padding: 8px; gap: 8px; border-radius: 10px; }
   .collection-hint{ display:none; }
   .collection-arrow{ width: 28px; height: 28px; font-size: 14px; }
-  .carousel .book{ flex-basis: 118px; }
+  .carousel .book{ flex-basis: 120px; width:120px; }
+  .shelf-subheading{ font-size:21px; }
+  .shelf-subheading::before{ height:20px; }
   .bookshelf.carousel{ gap: 14px; }
   .car-arrows{ display:none; }
   .footer-cols{ gap: 36px; }
@@ -1037,13 +1043,13 @@ function bookHtml(item, type){
   const cover = item.coverImageUrl
     ? '<img src="' + item.coverImageUrl + '" alt="" loading="lazy" decoding="async" width="360" height="540">'
     : '<div class="book-gen" style="background:linear-gradient(160deg,hsl(' + hue + ' 28% 34%),hsl(' + ((hue + 28) % 360) + ' 32% 17%));"><span class="book-gen-title">' + escapeHtml(item.title || 'Untitled') + '</span><span class="book-gen-author">' + escapeHtml(item.author || 'Aden Babar') + '</span></div>';
-  const ring = pct > 0 ? '<span class="book-ring" style="--p:' + pct + '"><i>' + (pct >= 99 ? '✓' : pct + '%') + '</i></span>' : '';
+  const done = pct >= 99 ? '<div class="book-done"><span></span>Completed</div>' : '';
   const sub = readingTimeFor(item) + (count > 0 ? ' · ★ ' + avg.toFixed(1) : '');
   return '<div class="book-cover-wrap"><div class="book-cover">' + cover +
-    '<span class="book-badge">' + (type === 'novel' ? 'Novel' : 'Article') + '</span>' + ring + '</div></div>' +
+    '<span class="book-badge">' + (type === 'novel' ? 'Novel' : 'Article') + '</span></div></div>' +
     '<div class="book-title">' + escapeHtml(item.title || 'Untitled') + '</div>' +
     '<div class="book-author">by ' + escapeHtml(item.author || 'Aden') + '</div>' +
-    '<div class="book-sub">' + sub + '</div>';
+    '<div class="book-sub">' + sub + '</div>' + done;
 }
 
 function renderBooks(el, list, limit, type, withMore){
