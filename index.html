@@ -212,6 +212,30 @@ body{
 .announce-card-excerpt{ font-size: 13.5px; color: var(--ink-soft); font-weight: 500; line-height: 1.5; }
 .no-announce{ font-family:'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
 .shelf{ display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+
+/* ---------- Digital bookshelf (novels & articles) ---------- */
+.bookshelf{ display:grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 26px 18px; }
+.book{ background:none; border:none; padding:0; text-align:left; cursor:pointer; color:inherit; font:inherit; content-visibility:auto; contain-intrinsic-size: 190px 330px; }
+.book-cover-wrap{ position:relative; padding-bottom: 9px; }
+.book-cover-wrap::after{ content:''; position:absolute; left:-6px; right:-6px; bottom:0; height:7px; border-radius:2px; background: linear-gradient(180deg, var(--line), var(--surface-2)); box-shadow: 0 4px 8px rgba(0,0,0,0.25); }
+.book-cover{ position:relative; aspect-ratio: 2/3; border-radius: 3px 7px 7px 3px; overflow:hidden; background: var(--surface-2); box-shadow: inset -3px 0 0 rgba(0,0,0,0.22), 0 10px 18px -8px rgba(0,0,0,0.55); transition: transform 0.18s ease; }
+.book:hover .book-cover{ transform: translateY(-6px); }
+.book-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+.book-gen{ width:100%; height:100%; display:flex; flex-direction:column; justify-content:space-between; padding: 16px 12px 12px; border: 1px solid rgba(255,255,255,0.14); box-sizing:border-box; color:#fff; text-align:center; }
+.book-gen-title{ font-family:'Fraunces', serif; font-weight:700; font-size:15px; line-height:1.2; margin-top:18px; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+.book-gen-author{ font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.14em; text-transform:uppercase; opacity:0.8; }
+.book-badge{ position:absolute; top:7px; left:7px; font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:8.5px; letter-spacing:0.1em; text-transform:uppercase; background:rgba(0,0,0,0.62); color:#fff; padding:3px 6px; border-radius:3px; }
+.book-ring{ position:absolute; right:7px; bottom:7px; width:34px; height:34px; border-radius:50%; background: conic-gradient(var(--accent) calc(var(--p) * 1%), rgba(0,0,0,0.55) 0); display:flex; align-items:center; justify-content:center; }
+.book-ring i{ font-style:normal; width:26px; height:26px; border-radius:50%; background:rgba(0,0,0,0.82); color:#fff; font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:8px; display:flex; align-items:center; justify-content:center; }
+.book-title{ font-family:'Fraunces', serif; font-weight:700; font-size:14px; line-height:1.25; margin-top:8px; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.book-author{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--ink-faint); margin-top:3px; }
+.book-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600; color:var(--accent); margin-top:2px; }
+.show-more{ grid-column: 1 / -1; justify-self:center; }
+.shelf-sub-row{ display:flex; justify-content:space-between; align-items:center; margin: 6px 0 16px; }
+.shelf-sub-row ~ .shelf-sub-row{ margin-top: 36px; }
+.shelf-subheading{ font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft); }
+.view-all{ background:none; border:none; color:var(--accent); font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700; letter-spacing:0.05em; cursor:pointer; }
+.view-all:hover{ text-decoration:underline; }
 .empty-shelf{ font-family:'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-faint); }
 
 .card{
@@ -414,6 +438,9 @@ body{
 }
 
 @media (max-width: 600px){
+  .bookshelf{ grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 22px 12px; }
+  .book-title{ font-size: 12.5px; }
+  .book-gen-title{ font-size: 12.5px; }
   .shell{ padding: 0 16px 60px; }
   .topbar{ padding: 20px 0 16px; margin-bottom: 22px; gap: 10px; }
   .brand-mark{ font-size: 21px; }
@@ -511,6 +538,7 @@ body{
     <div class="quick-nav" id="quick-nav">
       <button data-jump="section-announcements">Announcements</button>
       <button data-jump="section-reviews">Reviews</button>
+      <button data-jump="section-bookshelf">Bookshelf</button>
       <button data-collection="novel">Novels</button>
       <button data-collection="article">Articles</button>
       <button data-collection="quote">Quotes</button>
@@ -526,6 +554,16 @@ body{
     <div class="reviews-feed" id="section-reviews">
       <div class="section-heading">What readers are saying</div>
       <div class="feed-row" id="feed-row"><div class="loading">Loading reviews…</div></div>
+    </div>
+
+    <div class="shelf-section" id="section-bookshelf">
+      <div class="shelf-heading-row">
+        <div class="shelf-heading">Digital Bookshelf</div>
+      </div>
+      <div class="shelf-sub-row"><div class="shelf-subheading">Novels</div><button class="view-all" data-collection="novel">View all →</button></div>
+      <div class="bookshelf" id="home-shelf-novel"><div class="loading">Loading…</div></div>
+      <div class="shelf-sub-row"><div class="shelf-subheading">Articles</div><button class="view-all" data-collection="article">View all →</button></div>
+      <div class="bookshelf" id="home-shelf-article"><div class="loading">Loading…</div></div>
     </div>
 
     <div class="collection-grid">
@@ -635,6 +673,10 @@ body{
       <div class="btn-row" style="margin-top:26px;">
         <button class="btn btn-primary" id="publish-btn">Publish to shelf</button>
         <span class="status-msg" id="publish-status"></span>
+      </div>
+      <div class="btn-row" style="margin-top:22px; padding-top:18px; border-top:1px solid var(--line);">
+        <button class="btn" id="optimize-images-btn" type="button">Optimize existing images</button>
+        <span class="status-msg" id="optimize-status"></span>
       </div>
     </div>
   </div>
@@ -751,10 +793,8 @@ const storageAPI = {
     }catch(e){ return null; }
   },
   async set(docId, data){
-    try{
-      await db.collection('site').doc(docId).set(data);
-      return true;
-    }catch(e){ return null; }
+    await db.collection('site').doc(docId).set(data);
+    return true;
   }
 };
 
@@ -780,7 +820,14 @@ function starString(n){
   n = Math.round(n || 0);
   return '★★★★★☆☆☆☆☆'.slice(5-n, 10-n);
 }
+const rtCache = new WeakMap();
 function readingTimeFor(item){
+  if(rtCache.has(item)) return rtCache.get(item);
+  const v = _readingTimeCalc(item);
+  rtCache.set(item, v);
+  return v;
+}
+function _readingTimeCalc(item){
   let words = 0;
   if(item.type === 'quote'){
     words = (item.quoteText || '').trim().split(/\s+/).filter(Boolean).length;
@@ -861,10 +908,9 @@ document.getElementById('newsletter-submit').addEventListener('click', async () 
   }
   statusEl.textContent = 'Saving…';
   try{
-    const r = await storageAPI.get('newsletter-signups');
-    const list = r && r.json ? JSON.parse(r.json) : [];
-    list.push({ email, createdAt: new Date().toISOString() });
-    await storageAPI.set('newsletter-signups', { json: JSON.stringify(list) });
+    await db.collection('site').doc('newsletter-signups').set({
+      emails: firebase.firestore.FieldValue.arrayUnion({ email, createdAt: new Date().toISOString() })
+    }, { merge: true });
     statusEl.textContent = "You're on the list!";
     input.value = '';
   }catch(e){
@@ -933,74 +979,70 @@ document.getElementById('feed-row').addEventListener('mouseleave', () => { feedP
 /* ===================== SHELVES (carousels) ===================== */
 let currentCollectionType = null;
 
+const BOOK_PAGE = 12;
+let collectionLimit = BOOK_PAGE;
+
 function renderShelves(){
+  renderBooks(document.getElementById('home-shelf-novel'), items.filter(i => i.type === 'novel'), 6, 'novel', false);
+  renderBooks(document.getElementById('home-shelf-article'), items.filter(i => i.type === 'article'), 6, 'article', false);
   if(currentCollectionType){ renderShelf(currentCollectionType, 'shelf-collection'); }
   renderAnnouncements();
 }
+
+function coverHue(str){ let h = 0; for(let i = 0; i < str.length; i++){ h = (h * 31 + str.charCodeAt(i)) % 360; } return h; }
+
+function bookHtml(item, type){
+  const { avg, count } = avgRatingFor(item.id);
+  const pct = getSavedProgress(item.id);
+  const hue = coverHue(item.id + (item.title || ''));
+  const cover = item.coverImageUrl
+    ? '<img src="' + item.coverImageUrl + '" alt="" loading="lazy" decoding="async" width="360" height="540">'
+    : '<div class="book-gen" style="background:linear-gradient(160deg,hsl(' + hue + ' 28% 34%),hsl(' + ((hue + 28) % 360) + ' 32% 17%));"><span class="book-gen-title">' + escapeHtml(item.title || 'Untitled') + '</span><span class="book-gen-author">' + escapeHtml(item.author || 'Aden Babar') + '</span></div>';
+  const ring = pct > 0 ? '<span class="book-ring" style="--p:' + pct + '"><i>' + (pct >= 99 ? '✓' : pct + '%') + '</i></span>' : '';
+  const sub = readingTimeFor(item) + (count > 0 ? ' · ★ ' + avg.toFixed(1) : '');
+  return '<div class="book-cover-wrap"><div class="book-cover">' + cover +
+    '<span class="book-badge">' + (type === 'novel' ? 'Novel' : 'Article') + '</span>' + ring + '</div></div>' +
+    '<div class="book-title">' + escapeHtml(item.title || 'Untitled') + '</div>' +
+    '<div class="book-author">by ' + escapeHtml(item.author || 'Aden') + '</div>' +
+    '<div class="book-sub">' + sub + '</div>';
+}
+
+function renderBooks(el, list, limit, type, withMore){
+  if(!el) return;
+  if(list.length === 0){ el.innerHTML = '<div class="empty-shelf">Nothing here yet.</div>'; return; }
+  let html = list.slice(0, limit).map(it => '<button class="book" data-id="' + it.id + '">' + bookHtml(it, type) + '</button>').join('');
+  if(withMore && list.length > limit){
+    html += '<button class="btn show-more" data-more="1">Show more (' + (list.length - limit) + ' more)</button>';
+  }
+  el.innerHTML = html;
+}
+
 function renderShelf(type, containerId){
   const el = document.getElementById(containerId);
   const list = items.filter(i => i.type === type);
-  if(list.length === 0){
-    el.innerHTML = '<div class="empty-shelf">Nothing here yet.</div>';
+  if(type === 'novel' || type === 'article'){
+    el.className = 'bookshelf';
+    renderBooks(el, list, collectionLimit, type, true);
     return;
   }
-  el.innerHTML = '';
-  list.forEach((item, idx) => {
+  el.className = 'shelf';
+  if(list.length === 0){ el.innerHTML = '<div class="empty-shelf">Nothing here yet.</div>'; return; }
+  el.innerHTML = list.map(item => {
     const { avg, count } = avgRatingFor(item.id);
-    const shade = CARD_SHADES[idx % CARD_SHADES.length];
-    const ratingHtml = count > 0 ? '<div class="card-rating">'+starString(avg)+' ('+count+')</div>' : '';
-    const coverHtml = item.coverImageUrl ? '<img src="'+item.coverImageUrl+'" alt="" class="card-cover">' : '';
-    const card = document.createElement('button');
-
-    const savedPct = getSavedProgress(item.id);
-    const progressHtml = savedPct > 0
-      ? '<div class="card-progress-track"><div class="card-progress-fill" style="width:'+savedPct+'%;"></div></div><div class="card-progress-label">'+(savedPct>=99?'Finished':savedPct+'% read')+'</div>'
-      : '';
-
-    if(type === 'novel'){
-      card.className = 'card card-novel';
-      const excerpt = (item.description||'').slice(0,70) + ((item.description||'').length>70?'…':'');
-      card.innerHTML = `
-        ${coverHtml || '<div class="card-top" style="background:var(--'+shade+');"></div>'}
-        <div class="card-body">
-          <div class="card-badge">Novel</div>
-          <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
-          ${excerpt ? '<div class="card-excerpt">'+escapeHtml(excerpt)+'</div>' : ''}
-          <div class="card-author">by ${escapeHtml(item.author || 'Aden')}</div>
-          <div class="card-readtime">${readingTimeFor(item)}</div>
-          ${progressHtml}
-          ${ratingHtml}
-        </div>`;
-    }else if(type === 'article'){
-      card.className = 'card card-article';
-      const excerpt = (item.description||'').slice(0,120) + ((item.description||'').length>120?'…':'');
-      card.innerHTML = `
-        ${coverHtml || '<div class="card-top" style="background:var(--'+shade+');"></div>'}
-        <div class="card-body">
-          <div class="card-badge">Article</div>
-          <div class="card-title">${escapeHtml(item.title || 'Untitled')}</div>
-          ${excerpt ? '<div class="card-excerpt">'+escapeHtml(excerpt)+'</div>' : ''}
-          <div class="card-author">by ${escapeHtml(item.author || 'Aden')}</div>
-          <div class="card-readtime">${readingTimeFor(item)}</div>
-          ${progressHtml}
-          ${ratingHtml}
-        </div>`;
-    }else{
-      card.className = 'card card-quote';
-      const snippet = (item.quoteText||'').slice(0,80) + ((item.quoteText||'').length>80?'…':'');
-      card.innerHTML = `
-        <div class="card-body">
-          <span class="quote-glyph">“</span>
-          <div class="card-badge">Quote</div>
-          <div class="card-title">${escapeHtml(snippet)}</div>
-          <div class="card-author">— ${escapeHtml(item.author || 'Aden')}</div>
-          ${ratingHtml}
-        </div>`;
-    }
-    card.addEventListener('click', () => openItem(item.id));
-    el.appendChild(card);
-  });
+    const ratingHtml = count > 0 ? '<div class="card-rating">' + starString(avg) + ' (' + count + ')</div>' : '';
+    const snippet = (item.quoteText || '').slice(0, 80) + ((item.quoteText || '').length > 80 ? '…' : '');
+    return '<button class="card card-quote" data-id="' + item.id + '"><div class="card-body"><span class="quote-glyph">“</span><div class="card-badge">Quote</div><div class="card-title">' +
+      escapeHtml(snippet) + '</div><div class="card-author">— ' + escapeHtml(item.author || 'Aden') + '</div>' + ratingHtml + '</div></button>';
+  }).join('');
 }
+
+['home-shelf-novel', 'home-shelf-article', 'shelf-collection'].forEach(id => {
+  document.getElementById(id).addEventListener('click', (e) => {
+    if(e.target.closest('[data-more]')){ collectionLimit += BOOK_PAGE; renderShelf(currentCollectionType, 'shelf-collection'); return; }
+    const b = e.target.closest('[data-id]');
+    if(b) openItem(b.dataset.id);
+  });
+});
 
 function renderAnnouncements(){
   const el = document.getElementById('announcements-feed');
@@ -1030,6 +1072,7 @@ function renderAnnouncements(){
 
 function openCollection(type){
   currentCollectionType = type;
+  collectionLimit = BOOK_PAGE;
   document.getElementById('view-library').style.display = 'none';
   document.getElementById('view-upload').style.display = 'none';
   document.getElementById('view-reader').classList.remove('active');
@@ -1377,6 +1420,7 @@ document.getElementById('back-to-shelf').addEventListener('click', () => {
   document.getElementById('view-library').style.display = 'block';
   currentItem = null;
   document.getElementById('progress-bar').style.width = '0%';
+  renderShelves();
   window.scrollTo({ top: 0 });
 });
 document.getElementById('delete-book').addEventListener('click', () => {
@@ -1526,20 +1570,25 @@ addChapterBlock();
 /* ===================== IMAGE UPLOAD (compressed to a data URL, no hosting needed) ===================== */
 let pendingImageDataUrl = null;
 
-function compressImageFile(file, maxDim, quality){
+function drawCompressed(img, maxDim, quality, cropAspect){
+  let sx = 0, sy = 0, sw = img.width, sh = img.height;
+  if(cropAspect){
+    if(sw / sh > cropAspect){ const nw = sh * cropAspect; sx = (sw - nw) / 2; sw = nw; }
+    else{ const nh = sw / cropAspect; sy = (sh - nh) / 2; sh = nh; }
+  }
+  const scale = Math.min(1, maxDim / Math.max(sw, sh));
+  const w = Math.round(sw * scale), h = Math.round(sh * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+  return canvas.toDataURL('image/jpeg', quality);
+}
+function compressImageFile(file, maxDim, quality, cropAspect){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
-      img.onload = () => {
-        let w = img.width, h = img.height;
-        if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
-        else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', quality));
-      };
+      img.onload = () => resolve(drawCompressed(img, maxDim, quality, cropAspect));
       img.onerror = () => reject(new Error('bad image'));
       img.src = e.target.result;
     };
@@ -1547,6 +1596,37 @@ function compressImageFile(file, maxDim, quality){
     reader.readAsDataURL(file);
   });
 }
+function shrinkDataUrl(url, maxDim, quality, cropAspect){
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(drawCompressed(img, maxDim, quality, cropAspect));
+    img.onerror = () => resolve(url);
+    img.src = url;
+  });
+}
+
+document.getElementById('optimize-images-btn').addEventListener('click', async () => {
+  if(!isOwner) return;
+  const st = document.getElementById('optimize-status');
+  st.classList.remove('err');
+  st.textContent = 'Optimizing…';
+  let changed = 0, saved = 0;
+  try{
+    for(const it of items){
+      const isAnn = it.type === 'announcement';
+      const key = isAnn ? 'imageUrl' : 'coverImageUrl';
+      const url = it[key];
+      if(url && url.indexOf('data:') === 0 && url.length > 60000){
+        const out = await shrinkDataUrl(url, isAnn ? 600 : 540, 0.7, isAnn ? null : 2 / 3);
+        if(out.length < url.length){ saved += url.length - out.length; it[key] = out; changed++; }
+      }
+    }
+    if(changed){ await saveItems(); renderShelves(); }
+    st.textContent = changed ? ('Optimized ' + changed + ' image(s), saved about ' + Math.round(saved / 1024) + ' KB.') : 'Your images are already small — nothing to do.';
+  }catch(e){
+    st.textContent = 'Could not optimize — please try again.'; st.classList.add('err');
+  }
+});
 
 document.getElementById('f-image-file').addEventListener('change', async (e) => {
   const file = e.target.files[0];
@@ -1555,7 +1635,8 @@ document.getElementById('f-image-file').addEventListener('change', async (e) => 
   if(!file) return;
   statusEl.textContent = 'Processing image…';
   try{
-    const dataUrl = await compressImageFile(file, 700, 0.72);
+    const isCover = uploadType !== 'announcement';
+    const dataUrl = await compressImageFile(file, isCover ? 540 : 600, 0.7, isCover ? 2 / 3 : null);
     pendingImageDataUrl = dataUrl;
     previewEl.src = dataUrl;
     previewEl.style.display = 'block';
